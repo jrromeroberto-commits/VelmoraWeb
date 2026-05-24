@@ -21,7 +21,7 @@ button {
 }
 
 
-
+/* Header */
 .header {
   width: 100%;
   height: 58px;
@@ -95,6 +95,8 @@ button {
   cursor: pointer;
 }
 
+/* Hero */
+
 .hero {
   width: 100%;
   min-height: calc(100vh - 58px);
@@ -161,6 +163,98 @@ button {
   background-color: #9e844d;
 }
 
+/* Stores */
+.store-section{
+  width: 100%;
+  padding: 28px 50px 35px;
+  background: #fffdf8;
+  text-align: center;
+}
+
+.store-title {
+  display: flex;
+  justify-self: center;
+  align-items: center;
+  gap: 22px;
+  margin-bottom: 6px;
+}
+
+.store-title span{
+  width: 240px;
+  height: 1px;
+  background-color: #bb9c62;
+}
+
+.store-title h2{
+  font-size: 38px;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 7px;
+  font-weight: 700;
+}
+
+.store-subtitle{
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  columns: #777;
+  margin-bottom: 35px;
+}
+
+.store-grid{
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 70px;
+}
+
+.store-logo-img {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  margin-bottom: 8px;
+}
+
+.store-card-featured h3{
+  font-size: 23px;
+  text-transform: uppercase;
+  letter-spacing: 8px;
+  font-weight: 400;
+  margin-bottom: 8px;
+}
+
+.store-line {
+  width: 260px;
+  height: 1px;
+  background-color: #ddd2bd;
+  margin-bottom: 8px;
+}
+
+.store-card-featured p{
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.store-button {
+  background-color: #111;
+  color: white;
+  padding: 8px 34px;
+  border-radius: 6px;
+
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  transition: 0.2s ease;
+}
+.store-button:hover{
+  background-color: #bb9c62;
+}
 
 @media (max-width: 900px) {
   .header {
