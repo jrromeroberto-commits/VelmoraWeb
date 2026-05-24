@@ -40,6 +40,7 @@ button {
 .header-logo {
   display: flex;
   align-items: center;
+  z-index: 1002;
 }
 
 .header-logo img {
@@ -71,19 +72,14 @@ button {
   letter-spacing: 0.6px;
 }
 
-.header-nav a{
-  color: #111;
-  text-decoration: none;
-}
-.header-actions a {
+.header-nav a,
+.header-actions a{
   color: #111;
   text-decoration: none;
 }
 
-.header-nav a:hover{
-  color: #b59b63;
-}
-.header-actions a:hover {
+.header-nav a:hover,
+.header-actions a:hover{
   color: #b59b63;
 }
 
@@ -93,6 +89,26 @@ button {
   font-size: 20px;
   padding: 0;
   cursor: pointer;
+}
+
+.hamburger{
+  display: none;
+  width: 28px;
+  height: 22px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+}
+
+.hamburger span{
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: #111;
+  margin-bottom: 6px;
+  transition: 0.3s ease;
 }
 
 /* Hero */
@@ -258,19 +274,86 @@ button {
 
 @media (max-width: 900px) {
   .header {
+    height: 58px;
     padding: 0 20px;
+    grid-template-columns: auto 1fr;
   }
 
   .header-logo img {
     height: 30px;
   }
-    .hero {
-    grid-template-columns: 1fr;
-    min-height: auto;
+
+  .header-actions{
+    justify-self: end; 
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .header-actions >a{
+    display: none;
+  }
+
+  .hamburger{
+    display: block;
+  }
+
+  .header-nav{
+    position: fixed;
+    top: 58px;
+    right: -100%;
+    width: 75%;
+    max-width: 330px;
+    height: calc(100vh - 58px);
+
+    background-color: #fffdf8;
+    border-left: 1px solid #ddd2bd;
+    box-shadow: -8px 0 24px rgba(0, 0, 0, 0.08);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    padding: 40px 30px;
+    gap: 24px;
+
+    transition: right 0.35s ease;
+    z-index: 1001;
+  }
+
+  .header-nav.active{
+    right: 0;
+  }
+
+  .header-nav a{
+    font-size: 15px;
+  }
+
+  .hamburger.active span:nth-child(1){
+    transform: translateY(8px) rotate(45deg);
+  }
+
+  .hamburger.active span:nth-child(2){
+    opacity: 0;
+  }
+
+  .hamburger.active span:nth-child(3){
+    transform: translateY(-8px) rotate(-45deg);
+  }
+
+  .hero {
+    min-height: 520px;
+    background-position: center;
   }
 
   .hero-text {
-    padding: 50px 25px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    padding: 0 28px;
+    margin-left: 0;
   }
 
   .hero-text h1 {
@@ -279,11 +362,139 @@ button {
   }
 
   .hero-text p {
+    max-width: 360px;
     font-size: 13px;
+    letter-spacing: 1px;
   }
 
-  .hero-image {
-    height: 360px;
+  .hero-button {
+    padding: 9px 22px;
+    font-size: 12px;
+  }
+   .store-section {
+    padding: 35px 24px;
   }
 
+  .store-title {
+    gap: 14px;
+  }
+
+  .store-title span {
+    width: 70px;
+  }
+
+  .store-title h2 {
+    font-size: 28px;
+    letter-spacing: 4px;
+  }
+
+  .store-subtitle {
+    font-size: 11px;
+    margin-bottom: 30px;
+  }
+
+  .store-grid {
+    grid-template-columns: 1fr;
+    gap: 42px;
+  }
+
+  .store-logo-img {
+    width: 95px;
+    height: 60px;
+  }
+
+  .store-card-featured h3 {
+    font-size: 22px;
+  }
+
+  .store-line {
+    width: 220px;
+  }
+}
+
+
+
+@media (max-width: 500px) {
+
+  .header {
+    height: 56px;
+    padding: 0 14px;
+    grid-template-columns: auto 1fr;
+  }
+
+  .header-logo img {
+    height: 28px;
+  }
+
+  .header-actions {
+    justify-self: end;
+    gap: 12px;
+  }
+
+  .header-cart {
+    font-size: 18px;
+  }
+
+  .hamburger {
+    width: 24px;
+    height: 20px;
+  }
+
+  .hamburger span {
+    height: 2px;
+    margin-bottom: 5px;
+  }
+
+  .header-nav {
+    top: 56px;
+    width: 82%;
+    max-width: none;
+    height: calc(100vh - 56px);
+
+    padding: 34px 24px;
+    gap: 22px;
+  }
+
+  .header-nav a {
+    font-size: 14px;
+    letter-spacing: 0.8px;
+  }
+
+  .hamburger.active span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .hamburger.active span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  .hero {
+    min-height: 470px;
+    background-position: center;
+  }
+
+  .hero-text h1 {
+    font-size: 34px;
+    letter-spacing: 3px;
+  }
+
+  .hero-text p {
+    max-width: 310px;
+    font-size: 12px;
+  }
+
+  .store-title span {
+    width: 45px;
+  }
+
+  .store-title h2 {
+    font-size: 23px;
+    letter-spacing: 3px;
+  }
+
+  .store-subtitle {
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
