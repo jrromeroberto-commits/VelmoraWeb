@@ -54,7 +54,6 @@ button {
   justify-content: center;
   align-items: center;
   gap: 28px;
-
   font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
@@ -82,7 +81,7 @@ button {
 .header-actions a:hover{
   color: #b59b63;
 }
-
+  
 .header-cart {
   background: transparent;
   border: none;
@@ -109,6 +108,49 @@ button {
   background-color: #111;
   margin-bottom: 6px;
   transition: 0.3s ease;
+}
+
+/* PROMO BAR */
+
+.promo-bar {
+  width: 100%;
+  height: 34px;
+  background-color: #bb9c62;
+  color: #fffdf8;
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+
+  border-bottom: 1px solid #9e844d;
+}
+
+.promo-track {
+  display: flex;
+  align-items: center;
+  gap: 55px;
+
+  width: max-content;
+  white-space: nowrap;
+
+  animation: promoMove 22s linear infinite;
+}
+
+.promo-track span {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.1px;
+}
+
+@keyframes promoMove {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 /* Hero */
@@ -273,6 +315,8 @@ button {
 }
 
 @media (max-width: 900px) {
+
+  /* HEADER TABLET */
   .header {
     height: 58px;
     padding: 0 20px;
@@ -293,7 +337,7 @@ button {
   .header-actions >a{
     display: none;
   }
-
+  /* menu hamburguesa tablet */
   .hamburger{
     display: block;
   }
@@ -342,6 +386,22 @@ button {
     transform: translateY(-8px) rotate(-45deg);
   }
 
+  /* promo board TABLET*/
+  .promo-bar {
+    height: 32px;
+  }
+
+  .promo-track {
+    gap: 40px;
+    animation-duration: 18s;
+  }
+
+  .promo-track span {
+    font-size: 11px;
+    letter-spacing: 0.8px;
+  }
+
+  /* HERO TABLET */
   .hero {
     min-height: 520px;
     background-position: center;
@@ -371,6 +431,8 @@ button {
     padding: 9px 22px;
     font-size: 12px;
   }
+
+  /* STORE SECTION TABLET*/
    .store-section {
     padding: 35px 24px;
   }
@@ -410,12 +472,12 @@ button {
   .store-line {
     width: 220px;
   }
+
 }
-
-
 
 @media (max-width: 500px) {
 
+  /* HEADER CELULAR */
   .header {
     height: 56px;
     padding: 0 14px;
@@ -434,6 +496,8 @@ button {
   .header-cart {
     font-size: 18px;
   }
+
+  /* ICONO HAMBURGUESA MENU */
 
   .hamburger {
     width: 24px;
@@ -468,6 +532,22 @@ button {
     transform: translateY(-7px) rotate(-45deg);
   }
 
+  /* promo board CELULAR */
+  .promo-bar {
+    height: 30px;
+  }
+
+  .promo-track {
+    gap: 32px;
+    animation-duration: 15s;
+  }
+
+  .promo-track span {
+    font-size: 10px;
+  }
+
+  /* HERO CELULAR*/
+
   .hero {
     min-height: 470px;
     background-position: center;
@@ -482,6 +562,8 @@ button {
     max-width: 310px;
     font-size: 12px;
   }
+
+  /* STORE SECTION CELULAR */
 
   .store-title span {
     width: 45px;
