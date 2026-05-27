@@ -90,6 +90,10 @@ button {
   cursor: pointer;
 }
 
+   .mobile-only {
+    display: none;
+  }
+
 .hamburger{
   display: none;
   width: 28px;
@@ -673,6 +677,10 @@ button {
   
   .header-actions >a{
     display: none;
+  }
+
+  .mobile-only {
+    display: block;
   }
   /* menu hamburguesa tablet */
   .hamburger{

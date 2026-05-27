@@ -20,8 +20,12 @@ function Header() {
         <a href="#descuentos" onClick={closeMenu}>Descuentos exclusivos</a>
         <a href="#categorias" onClick={closeMenu}>Categorías</a>
         <a href="#casa" onClick={closeMenu}>De la casa</a>
-        <Link to="/registro" onClick={closeMenu}>Únete</Link>
-        <Link to="/login" onClick={closeMenu}>Iniciar sesión</Link>
+        <Link to="/registro" onClick={closeMenu} className="mobile-only">
+          Únete
+        </Link>
+        <Link to="/login" onClick={closeMenu} className="mobile-only">
+          Iniciar sesión
+        </Link>
       </nav>
 
       <div className="header-actions">
