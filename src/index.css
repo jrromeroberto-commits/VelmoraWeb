@@ -338,10 +338,9 @@ button {
 
   border: 4px solid #181818;
   border-radius: 28px;
-  background-color: #f1f1f1;
+  background-color: #fffdf8;
 
   padding: 32px 55px 28px;
-
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -535,7 +534,7 @@ button {
   font-size: 14px;
   font-weight: 500;
 
-  color: #aaa;
+  color: #111;
   outline: none;
 }
 
@@ -543,8 +542,6 @@ button {
   color: #aaa;
   opacity: 1;
 }
-
-/* TIPO DE USUARIO */
 
 .register-type {
   display: flex;
@@ -581,7 +578,6 @@ button {
   color: #fff;
 }
 
-/* ICONOS SOCIALES */
 
 .register-socials {
   display: flex;
@@ -613,7 +609,6 @@ button {
   font-size: 24px;
 }
 
-/* BOTÓN */
 
 .register-button {
   width: 275px;

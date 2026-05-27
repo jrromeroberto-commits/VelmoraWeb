@@ -43,7 +43,7 @@ function Register() {
 
             <input
               type="text"
-              placeholder="Usuario"
+              placeholder="Usuario (opcional)"
               className="register-input"
             />
           </div>
