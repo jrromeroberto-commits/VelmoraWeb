@@ -19,7 +19,7 @@ function Header() {
         <Link to="/" onClick={closeMenu}>Inicio</Link>
         <a href="#descuentos" onClick={closeMenu}>Descuentos exclusivos</a>
         <a href="#categorias" onClick={closeMenu}>Categorías</a>
-        <a href="#casa" onClick={closeMenu}>De la casa</a>
+        <a href="#anuncios" onClick={closeMenu}>Anuncios</a>
         <Link to="/registro" onClick={closeMenu} className="mobile-only">
           Únete
         </Link>
