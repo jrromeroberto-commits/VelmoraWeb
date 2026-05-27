@@ -3,6 +3,7 @@ import Header from "./componentes/Header";
 import PromoBar from "./componentes/PromoBar";
 import Hero from "./componentes/Hero";
 import Store from "./componentes/Store";
+import Footer from "./componentes/Footer";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
@@ -12,6 +13,7 @@ function Home() {
       <PromoBar />
       <Hero />
       <Store />
+      <Footer />
     </>
   );
 }
