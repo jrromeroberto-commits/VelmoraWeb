@@ -17,7 +17,9 @@ function Header() {
 
       <nav className={`header-nav ${menuOpen ? "active" : ""}`}>
         <Link to="/" onClick={closeMenu}>Inicio</Link>
-        <a href="#descuentos" onClick={closeMenu}>Descuentos exclusivos</a>
+        <Link to="/descuentos" onClick={closeMenu}>
+        Descuentos exclusivos
+        </Link>
         <a href="#categorias" onClick={closeMenu}>Categorías</a>
         <a href="#anuncios" onClick={closeMenu}>Anuncios</a>
         <Link to="/registro" onClick={closeMenu} className="mobile-only">
