@@ -7,14 +7,14 @@ import {
   FaTicketAlt,
 } from "react-icons/fa";
 
-import Footer from "../components/Footer";
+import Footer from "../componentes/Footer";
 
-import descuento1 from "../imagenes/descuento1.jpg";
-import descuento2 from "../imagenes/descuento2.jpg";
-import descuento3 from "../imagenes/descuento3.jpg";
-import descuento4 from "../imagenes/descuento4.jpg";
-import descuento5 from "../imagenes/descuento5.jpg";
-import descuento6 from "../imagenes/descuento6.jpg";
+import descuento1 from "../imagenes/descuento1.png";
+import descuento2 from "../imagenes/descuento2.png";
+import descuento3 from "../imagenes/descuento3.png";
+import descuento4 from "../imagenes/descuento4.png";
+import descuento5 from "../imagenes/descuento5.png";
+import descuento6 from "../imagenes/descuento6.png";
 
 function Discounts() {
   const [activeCategory, setActiveCategory] = useState("Todos");
