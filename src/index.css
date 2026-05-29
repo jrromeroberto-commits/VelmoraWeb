@@ -322,147 +322,294 @@ button {
 
 .login-page {
   min-height: calc(100vh - 58px);
-  background-color: #fffdf8;
-
+  background: #f7f3ea;
   display: flex;
+  align-items: center;
   justify-content: center;
-  align-items: center;
-
-  padding: 50px 20px;
+  padding: 45px 24px;
 }
 
-.login-card {
+.login-container {
   width: 100%;
-  max-width: 590px;
-  min-height: 470px;
-
-  border: 4px solid #181818;
-  border-radius: 28px;
-  background-color: #fffdf8;
-
-  padding: 32px 55px 28px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.login-card h1 {
-  font-size: 58px;
-  line-height: 1;
-  text-transform: uppercase;
-  letter-spacing: 4px;
-  font-weight: 700;
-  margin-bottom: 32px;
-}
-
-.login-form {
-  width: 100%;
-}
-
-.login-row {
-  width: 100%;
+  max-width: 1180px;
+  min-height: 650px;
+  background: #fffdf8;
+  border-radius: 26px;
+  overflow: hidden;
   display: grid;
-  grid-template-columns: 70px 1fr;
-  align-items: center;
-  margin-bottom: 30px;
+  grid-template-columns: 1fr 1fr;
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.14);
 }
 
-.login-icon {
-  font-size: 46px;
-  color: #000;
-  justify-self: center;
+.login-carousel {
+  position: relative;
+  overflow: hidden;
+  min-height: 650px;
 }
 
-.login-input {
-  width: 100%;
-  height: 46px;
-
-  border: 3px solid #111;
-  border-radius: 11px;
-  background-color: transparent;
-
-  text-align: center;
-  text-transform: uppercase;
-  font-size: 15px;
-  font-weight: 500;
-
-  outline: none;
+.login-slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 0.8s ease;
 }
 
-.login-input::placeholder {
-  color: #aaa;
+.login-slide.active {
   opacity: 1;
 }
 
-.login-socials {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 22px;
-
-  font-size: 31px;
-  margin-top: -6px;
-  margin-bottom: 16px;
+.login-carousel-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.18),
+    rgba(0, 0, 0, 0.68)
+  );
+  z-index: 1;
 }
 
-.login-divider {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 18px;
-
-  margin-bottom: 34px;
+.login-carousel-content {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  bottom: 48px;
+  z-index: 2;
+  color: white;
 }
 
-.login-divider span {
-  width: 150px;
-  height: 1px;
-  background-color: #d4b879;
-}
-
-.login-divider div {
-  color: #bb9c62;
-  font-size: 26px;
-}
-
-.login-button {
-  width: 275px;
-  height: 47px;
-
-  display: block;
-  margin: 0 auto 12px;
-
-  background-color: #181818;
-  color: #fff;
-
-  border: none;
-  border-radius: 10px;
-
+.login-small-text {
+  display: inline-block;
+  color: #e0c17c;
   text-transform: uppercase;
-  font-size: 15px;
+  letter-spacing: 3px;
+  font-size: 12px;
   font-weight: 700;
+  margin-bottom: 18px;
+}
 
+.login-carousel-content h2 {
+  font-size: 44px;
+  line-height: 1.12;
+  font-weight: 400;
+  margin-bottom: 18px;
+}
+
+.login-carousel-content p {
+  max-width: 500px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #eeeeee;
+}
+
+.login-dots {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.login-dots button {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(255, 255, 255, 0.35);
   cursor: pointer;
   transition: 0.2s ease;
 }
 
-.login-button:hover {
-  background-color: #bb9c62;
+.login-dots button.active {
+  background: #bb9c62;
 }
 
-.login-register {
+.login-form-side {
+  padding: 58px 76px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.login-logo-box {
   text-align: center;
-  color: #aaa;
+  margin-bottom: 42px;
+}
+
+.login-logo-box img {
+  width: 190px;
+  height: auto;
+  object-fit: contain;
+}
+
+.login-logo-box p {
+  color: #bb9c62;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  font-size: 11px;
+  margin-top: 8px;
+}
+
+.login-heading {
+  text-align: center;
+  margin-bottom: 34px;
+}
+
+.login-heading h1 {
+  font-size: 42px;
+  line-height: 1.1;
+  font-weight: 400;
+  margin-bottom: 12px;
+}
+
+.login-heading p {
+  color: #777;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.login-form-new {
+  width: 100%;
+}
+
+.login-form-new label {
+  display: block;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.login-input-box {
+  margin-top: 9px;
+  height: 52px;
+  border: 1px solid #d7d0c3;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 14px;
+  background: #fffdf8;
+}
+
+.login-input-box svg {
+  color: #8d8d8d;
   font-size: 16px;
 }
 
-.login-register a {
+.login-input-box input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  color: #111;
+}
+
+.login-input-box input::placeholder {
   color: #aaa;
+}
+
+.login-eye {
+  cursor: pointer;
+}
+
+.login-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 4px 0 26px;
+  font-size: 14px;
+}
+
+.remember-check {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  margin: 0 !important;
+  color: #777 !important;
+}
+
+.remember-check input {
+  width: 18px;
+  height: 18px;
+  accent-color: #bb9c62;
+}
+
+.login-options a {
+  color: #bb9c62;
   text-decoration: none;
 }
 
-.login-register a:hover {
+.login-submit {
+  width: 100%;
+  height: 54px;
+  background: #181818;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.login-submit:hover {
+  background: #bb9c62;
+}
+
+.login-separator {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 26px 0;
+  color: #999;
+}
+
+.login-separator span {
+  flex: 1;
+  height: 1px;
+  background: #ddd2bd;
+}
+
+.login-separator p {
+  margin: 0;
+}
+
+.google-button {
+  width: 100%;
+  height: 52px;
+  border: 1px solid #ddd2bd;
+  background: transparent;
+  border-radius: 8px;
+  color: #333;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.google-button svg {
+  color: #db4437;
+}
+
+.google-button:hover {
+  border-color: #bb9c62;
   color: #bb9c62;
+}
+
+.login-register-text {
+  text-align: center;
+  margin-top: 28px;
+  color: #777;
+  font-size: 15px;
+}
+
+.login-register-text a {
+  color: #bb9c62;
+  text-decoration: none;
+  font-weight: 700;
 }
 
 /* REGISTER PAGE */
@@ -649,7 +796,371 @@ button {
 .register-login a:hover {
   color: #bb9c62;
 }
+/*Pagina de Descuentos*/
 
+.discounts-page {
+  width: 100%;
+  background-color: #fffdf8;
+}
+
+.discount-hero {
+  min-height: 430px;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 253, 248, 0.94),
+      rgba(255, 253, 248, 0.82),
+      rgba(187, 156, 98, 0.18)
+    ),
+    url("./imagenes/descuento1.png");
+
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #ddd2bd;
+}
+
+.discount-hero-content {
+  padding: 70px 70px;
+  max-width: 700px;
+}
+
+.discount-label {
+  color: #bb9c62;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.discount-hero h1 {
+  font-size: 68px;
+  line-height: 1.05;
+  text-transform: uppercase;
+  letter-spacing: 7px;
+  margin-bottom: 22px;
+}
+
+.discount-hero h1 span {
+  color: #bb9c62;
+}
+
+.discount-hero-content > p {
+  max-width: 560px;
+  font-size: 15px;
+  line-height: 1.6;
+  text-transform: uppercase;
+  letter-spacing: 1.1px;
+  color: #555;
+  margin-bottom: 24px;
+}
+
+.discount-hero-button {
+  display: inline-block;
+  background-color: #181818;
+  color: white;
+  padding: 11px 30px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-decoration: none;
+  transition: 0.2s ease;
+}
+
+.discount-hero-button:hover {
+  background-color: #bb9c62;
+}
+
+.discount-section-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 22px;
+  margin-bottom: 22px;
+}
+
+.discount-section-title span {
+  width: 220px;
+  height: 1px;
+  background-color: #bb9c62;
+}
+
+.discount-section-title h2 {
+  font-size: 36px;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 6px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.discount-filters {
+  padding: 45px 50px 25px;
+  text-align: center;
+}
+
+.discount-filter-buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.discount-filter-buttons button {
+  border: 1px solid #bb9c62;
+  background-color: transparent;
+  color: #111;
+  padding: 9px 22px;
+  border-radius: 22px;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.discount-filter-buttons button:hover,
+.discount-filter-buttons button.active {
+  background-color: #bb9c62;
+  color: white;
+}
+
+.discount-grid-section {
+  padding: 20px 50px 60px;
+}
+
+.discount-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+.discount-card {
+  background-color: white;
+  border: 1px solid #ddd2bd;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: 0.25s ease;
+}
+
+.discount-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.09);
+}
+
+.discount-image {
+  height: 230px;
+  position: relative;
+  overflow: hidden;
+}
+
+.discount-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: 0.3s ease;
+}
+
+.discount-card:hover .discount-image img {
+  transform: scale(1.06);
+}
+
+.discount-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+
+  background-color: #181818;
+  color: white;
+  padding: 9px 14px;
+  border-radius: 20px;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.discount-info {
+  padding: 22px;
+}
+
+.discount-info h3 {
+  font-size: 25px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 8px;
+}
+
+.discount-info p {
+  color: #555;
+  font-size: 15px;
+  margin-bottom: 16px;
+}
+
+.discount-meta {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #777;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.discount-meta svg {
+  color: #bb9c62;
+}
+
+.discount-card-button {
+  display: inline-block;
+  margin-top: 14px;
+
+  background-color: #181818;
+  color: white;
+  padding: 9px 26px;
+  border-radius: 7px;
+
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: 0.2s ease;
+}
+
+.discount-card-button:hover {
+  background-color: #bb9c62;
+}
+
+.coupon-section {
+  padding: 50px 50px 65px;
+  background-color: #f8f4eb;
+}
+
+.coupon-grid {
+  max-width: 1050px;
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+}
+
+.coupon-card {
+  background-color: #fffdf8;
+  border: 1px solid #ddd2bd;
+  border-radius: 18px;
+  padding: 30px 25px;
+  text-align: center;
+  transition: 0.25s ease;
+}
+
+.coupon-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
+}
+
+.coupon-icon {
+  font-size: 36px;
+  color: #bb9c62;
+  margin-bottom: 12px;
+}
+
+.coupon-card h3 {
+  font-size: 26px;
+  letter-spacing: 3px;
+  color: #111;
+  margin-bottom: 10px;
+}
+
+.coupon-card p {
+  color: #555;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 18px;
+}
+
+.coupon-card button {
+  border: none;
+  background-color: #181818;
+  color: white;
+  padding: 9px 24px;
+  border-radius: 8px;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.coupon-card button:hover {
+  background-color: #bb9c62;
+}
+
+.seller-discount-banner {
+  max-width: 1100px;
+  margin: 60px auto;
+  padding: 38px 45px;
+
+  background-color: #181818;
+  color: white;
+  border-radius: 22px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+}
+
+.seller-discount-banner p {
+  color: #bb9c62;
+  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  margin-bottom: 8px;
+}
+
+.seller-discount-banner h2 {
+  font-size: 34px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 10px;
+}
+
+.seller-discount-banner span {
+  display: block;
+  max-width: 630px;
+  color: #ddd;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.seller-discount-banner a {
+  background-color: #bb9c62;
+  color: white;
+  text-decoration: none;
+  padding: 12px 28px;
+  border-radius: 8px;
+  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: 0.2s ease;
+}
+
+.seller-discount-banner a:hover {
+  background-color: white;
+  color: #181818;
+}
 /* FOOTER */
 
 .footer {
@@ -776,383 +1287,7 @@ button {
   font-size: 13px;
 }
 
-/* DISCOUNTS PAGE */
 
-.discounts-page {
-  width: 100%;
-  background-color: #fffdf8;
-}
-
-/* HERO DESCUENTOS */
-
-.discount-hero {
-  min-height: 430px;
-  background:
-    linear-gradient(
-      90deg,
-      rgba(255, 253, 248, 0.94),
-      rgba(255, 253, 248, 0.82),
-      rgba(187, 156, 98, 0.18)
-    ),
-    url("./imagenes/descuento1.png");
-
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid #ddd2bd;
-}
-
-.discount-hero-content {
-  padding: 70px 70px;
-  max-width: 700px;
-}
-
-.discount-label {
-  color: #bb9c62;
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 1.4px;
-  font-weight: 700;
-  margin-bottom: 18px;
-}
-
-.discount-hero h1 {
-  font-size: 68px;
-  line-height: 1.05;
-  text-transform: uppercase;
-  letter-spacing: 7px;
-  margin-bottom: 22px;
-}
-
-.discount-hero h1 span {
-  color: #bb9c62;
-}
-
-.discount-hero-content > p {
-  max-width: 560px;
-  font-size: 15px;
-  line-height: 1.6;
-  text-transform: uppercase;
-  letter-spacing: 1.1px;
-  color: #555;
-  margin-bottom: 24px;
-}
-
-.discount-hero-button {
-  display: inline-block;
-  background-color: #181818;
-  color: white;
-  padding: 11px 30px;
-  border-radius: 6px;
-  text-transform: uppercase;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.8px;
-  text-decoration: none;
-  transition: 0.2s ease;
-}
-
-.discount-hero-button:hover {
-  background-color: #bb9c62;
-}
-
-/* TITULOS */
-
-.discount-section-title {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 22px;
-  margin-bottom: 22px;
-}
-
-.discount-section-title span {
-  width: 220px;
-  height: 1px;
-  background-color: #bb9c62;
-}
-
-.discount-section-title h2 {
-  font-size: 36px;
-  line-height: 1;
-  text-transform: uppercase;
-  letter-spacing: 6px;
-  font-weight: 700;
-  text-align: center;
-}
-
-/* FILTROS */
-
-.discount-filters {
-  padding: 45px 50px 25px;
-  text-align: center;
-}
-
-.discount-filter-buttons {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 14px;
-}
-
-.discount-filter-buttons button {
-  border: 1px solid #bb9c62;
-  background-color: transparent;
-  color: #111;
-  padding: 9px 22px;
-  border-radius: 22px;
-  text-transform: uppercase;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-
-.discount-filter-buttons button:hover,
-.discount-filter-buttons button.active {
-  background-color: #bb9c62;
-  color: white;
-}
-
-/* GRID DE DESCUENTOS */
-
-.discount-grid-section {
-  padding: 20px 50px 60px;
-}
-
-.discount-grid {
-  max-width: 1200px;
-  margin: 0 auto;
-
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
-}
-
-.discount-card {
-  background-color: white;
-  border: 1px solid #ddd2bd;
-  border-radius: 16px;
-  overflow: hidden;
-  transition: 0.25s ease;
-}
-
-.discount-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.09);
-}
-
-.discount-image {
-  height: 230px;
-  position: relative;
-  overflow: hidden;
-}
-
-.discount-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: 0.3s ease;
-}
-
-.discount-card:hover .discount-image img {
-  transform: scale(1.06);
-}
-
-.discount-badge {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-
-  background-color: #181818;
-  color: white;
-  padding: 9px 14px;
-  border-radius: 20px;
-
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.discount-info {
-  padding: 22px;
-}
-
-.discount-info h3 {
-  font-size: 25px;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  margin-bottom: 8px;
-}
-
-.discount-info p {
-  color: #555;
-  font-size: 15px;
-  margin-bottom: 16px;
-}
-
-.discount-meta {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  color: #777;
-  font-size: 13px;
-  margin-bottom: 8px;
-}
-
-.discount-meta svg {
-  color: #bb9c62;
-}
-
-.discount-card-button {
-  display: inline-block;
-  margin-top: 14px;
-
-  background-color: #181818;
-  color: white;
-  padding: 9px 26px;
-  border-radius: 7px;
-
-  text-transform: uppercase;
-  font-size: 12px;
-  font-weight: 700;
-  text-decoration: none;
-  transition: 0.2s ease;
-}
-
-.discount-card-button:hover {
-  background-color: #bb9c62;
-}
-
-/* CUPONES */
-
-.coupon-section {
-  padding: 50px 50px 65px;
-  background-color: #f8f4eb;
-}
-
-.coupon-grid {
-  max-width: 1050px;
-  margin: 0 auto;
-
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 25px;
-}
-
-.coupon-card {
-  background-color: #fffdf8;
-  border: 1px solid #ddd2bd;
-  border-radius: 18px;
-  padding: 30px 25px;
-  text-align: center;
-  transition: 0.25s ease;
-}
-
-.coupon-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
-}
-
-.coupon-icon {
-  font-size: 36px;
-  color: #bb9c62;
-  margin-bottom: 12px;
-}
-
-.coupon-card h3 {
-  font-size: 26px;
-  letter-spacing: 3px;
-  color: #111;
-  margin-bottom: 10px;
-}
-
-.coupon-card p {
-  color: #555;
-  font-size: 14px;
-  line-height: 1.5;
-  margin-bottom: 18px;
-}
-
-.coupon-card button {
-  border: none;
-  background-color: #181818;
-  color: white;
-  padding: 9px 24px;
-  border-radius: 8px;
-  text-transform: uppercase;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-
-.coupon-card button:hover {
-  background-color: #bb9c62;
-}
-
-/* BANNER VENDEDOR */
-
-.seller-discount-banner {
-  max-width: 1100px;
-  margin: 60px auto;
-  padding: 38px 45px;
-
-  background-color: #181818;
-  color: white;
-  border-radius: 22px;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 30px;
-}
-
-.seller-discount-banner p {
-  color: #bb9c62;
-  text-transform: uppercase;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 1.2px;
-  margin-bottom: 8px;
-}
-
-.seller-discount-banner h2 {
-  font-size: 34px;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  margin-bottom: 10px;
-}
-
-.seller-discount-banner span {
-  display: block;
-  max-width: 630px;
-  color: #ddd;
-  font-size: 15px;
-  line-height: 1.5;
-}
-
-.seller-discount-banner a {
-  background-color: #bb9c62;
-  color: white;
-  text-decoration: none;
-  padding: 12px 28px;
-  border-radius: 8px;
-  text-transform: uppercase;
-  font-size: 13px;
-  font-weight: 700;
-  white-space: nowrap;
-  transition: 0.2s ease;
-}
-
-.seller-discount-banner a:hover {
-  background-color: white;
-  color: #181818;
-}
 
 @media (max-width: 900px) {
 
@@ -1318,27 +1453,37 @@ button {
   }
 
   /*Login Tablet*/
-  .login-page {
-    min-height: calc(100vh - 58px);
-    padding: 45px 20px;
+   .login-page {
+    padding: 32px 18px;
   }
 
-  .login-card {
-    max-width: 520px;
-    padding: 30px 38px;
+  .login-container {
+    grid-template-columns: 1fr;
+    max-width: 620px;
   }
 
-  .login-card h1 {
-    font-size: 48px;
+  .login-carousel {
+    min-height: 360px;
   }
 
-  .login-row {
-    grid-template-columns: 60px 1fr;
+  .login-carousel-content {
+    left: 32px;
+    right: 32px;
+    bottom: 32px;
   }
 
-  .login-icon {
-    font-size: 38px;
+  .login-carousel-content h2 {
+    font-size: 34px;
   }
+
+  .login-carousel-content p {
+    font-size: 14px;
+  }
+
+  .login-form-side {
+    padding: 44px 42px;
+  }
+
 
   /*Register tablet*/
 
@@ -1362,6 +1507,61 @@ button {
 
   .register-icon {
     font-size: 32px;
+  }
+
+  /*Descuento Tablet*/
+
+  .discount-hero {
+    min-height: 380px;
+  }
+
+  .discount-hero-content {
+    padding: 55px 30px;
+  }
+
+  .discount-hero h1 {
+    font-size: 46px;
+    letter-spacing: 4px;
+  }
+
+  .discount-hero-content > p {
+    font-size: 13px;
+    max-width: 480px;
+  }
+
+  .discount-section-title span {
+    width: 75px;
+  }
+
+  .discount-section-title h2 {
+    font-size: 28px;
+    letter-spacing: 4px;
+  }
+
+  .discount-filters {
+    padding: 40px 24px 20px;
+  }
+
+  .discount-grid-section {
+    padding: 20px 24px 50px;
+  }
+
+  .discount-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .coupon-section {
+    padding: 45px 24px 55px;
+  }
+
+  .coupon-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .seller-discount-banner {
+    margin: 45px 24px;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   /*Footer Tablet*/
@@ -1493,50 +1693,55 @@ button {
   /*Login Celular*/
 
   .login-page {
-    min-height: calc(100vh - 56px);
-    padding: 35px 16px;
+    padding: 24px 12px;
   }
 
-  .login-card {
-    border-width: 3px;
-    border-radius: 22px;
-    padding: 28px 22px;
+  .login-container {
+    border-radius: 18px;
   }
 
-  .login-card h1 {
-    font-size: 38px;
-    margin-bottom: 28px;
+  .login-carousel {
+    min-height: 310px;
   }
 
-  .login-row {
-    grid-template-columns: 1fr;
-    gap: 12px;
-    margin-bottom: 24px;
+  .login-carousel-content {
+    left: 24px;
+    right: 24px;
+    bottom: 26px;
   }
 
-  .login-icon {
-    font-size: 36px;
+  .login-carousel-content h2 {
+    font-size: 27px;
   }
 
-  .login-input {
-    height: 43px;
+  .login-carousel-content p {
     font-size: 13px;
   }
 
-  .login-socials {
-    font-size: 26px;
+  .login-small-text {
+    font-size: 10px;
   }
 
-  .login-divider span {
-    width: 90px;
+  .login-form-side {
+    padding: 36px 24px;
   }
 
-  .login-button {
-    width: 100%;
+  .login-logo-box img {
+    width: 155px;
   }
 
-  .login-register {
+  .login-heading h1 {
+    font-size: 32px;
+  }
+
+  .login-heading p {
     font-size: 14px;
+  }
+
+  .login-options {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
 
   /*Register Celular*/
@@ -1636,66 +1841,10 @@ button {
   .footer-bottom-line {
     margin-top: 25px;
   } 
-}
 
-/* RESPONSIVE PARA DESCUENTOS */
-@media (max-width: 900px) {
-  .discount-hero {
-    min-height: 380px;
-  }
+  /*Descunto celular*/
 
-  .discount-hero-content {
-    padding: 55px 30px;
-  }
-
-  .discount-hero h1 {
-    font-size: 46px;
-    letter-spacing: 4px;
-  }
-
-  .discount-hero-content > p {
-    font-size: 13px;
-    max-width: 480px;
-  }
-
-  .discount-section-title span {
-    width: 75px;
-  }
-
-  .discount-section-title h2 {
-    font-size: 28px;
-    letter-spacing: 4px;
-  }
-
-  .discount-filters {
-    padding: 40px 24px 20px;
-  }
-
-  .discount-grid-section {
-    padding: 20px 24px 50px;
-  }
-
-  .discount-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .coupon-section {
-    padding: 45px 24px 55px;
-  }
-
-  .coupon-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .seller-discount-banner {
-    margin: 45px 24px;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
-@media (max-width: 500px) {
-  .discount-hero {
+    .discount-hero {
     min-height: 360px;
   }
 
@@ -1768,4 +1917,4 @@ button {
     text-align: center;
   }
 }
-/* FIN DEL RESPONSIVE PARA DESCUENTOS */
+
