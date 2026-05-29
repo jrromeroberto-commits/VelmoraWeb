@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaEnvelope, FaLock, FaGoogle, FaEye } from "react-icons/fa";
+import { FaEnvelope, FaLock, FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa";
 
 import logoVelmora from "../imagenes/Logo_velmora_t.png";
 import slide1 from "../imagenes/login_slide1.png";
@@ -27,6 +27,7 @@ function Login() {
   ];
 
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -102,8 +103,20 @@ function Login() {
               Contraseña
               <div className="login-input-box">
                 <FaLock />
-                <input type="password" placeholder="••••••••••" />
-                <FaEye className="login-eye" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••••"
+                />
+                <button
+                  type="button"
+                  className="toggle-password login-eye"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={
+                    showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+                  }
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
               </div>
             </label>
 
