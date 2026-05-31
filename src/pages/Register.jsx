@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   FaUser,
   FaEnvelope,
@@ -14,7 +14,8 @@ import {
 import registerVisual from "../imagenes/login_slide1.png";
 import logoVelmora from "../imagenes/Logo_velmora_t.png";
 
-function Register() {
+function Register({ onRegister }) {
+  const navigate = useNavigate();
   const [userType, setUserType] = useState("comprador");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -22,6 +23,8 @@ function Register() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    onRegister(userType);
+    navigate(userType === "vendedor" ? "/crear-tienda" : "/");
   };
 
   return (
