@@ -574,7 +574,13 @@ button {
   margin: 0;
 }
 
-.google-button {
+.login-social-buttons {
+  display: flex;
+  gap: 14px;
+}
+
+.google-button,
+.apple-button {
   width: 100%;
   height: 52px;
   border: 1px solid #ddd2bd;
@@ -594,7 +600,12 @@ button {
   color: #db4437;
 }
 
-.google-button:hover {
+.apple-button svg {
+  color: #111;
+}
+
+.google-button:hover,
+.apple-button:hover {
   border-color: #bb9c62;
   color: #bb9c62;
 }
@@ -634,9 +645,6 @@ button {
   grid-template-columns: 1fr 1fr;
   box-shadow: 0 20px 55px rgba(0, 0, 0, 0.12);
 }
-
-/* IZQUIERDA */
-
 .register-form-side {
   padding: 36px 56px 30px;
   display: flex;
@@ -856,6 +864,112 @@ button {
 .register-bottom-info a {
   color: #999;
   text-decoration: none;
+}
+
+.privacy-link {
+  border: none;
+  background: transparent;
+  color: #999;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.privacy-link:hover {
+  color: #bb9c62;
+}
+
+.privacy-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(17, 17, 17, 0.58);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.privacy-modal {
+  width: 100%;
+  max-width: 680px;
+  max-height: min(760px, 90vh);
+  background: #fffdf8;
+  border: 1px solid #ddd2bd;
+  border-radius: 18px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+  padding: 34px;
+  position: relative;
+  overflow-y: auto;
+}
+
+.privacy-modal-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #ddd2bd;
+  border-radius: 50%;
+  background: transparent;
+  color: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.privacy-modal-close:hover {
+  border-color: #bb9c62;
+  color: #bb9c62;
+}
+
+.privacy-modal-label {
+  color: #bb9c62;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.privacy-modal h2 {
+  font-size: 38px;
+  line-height: 1.1;
+  margin-bottom: 20px;
+  color: #111;
+}
+
+.privacy-modal-content {
+  color: #555;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.privacy-modal-content h3 {
+  color: #111;
+  font-size: 18px;
+  margin: 20px 0 8px;
+}
+
+.privacy-modal-content p {
+  margin-bottom: 12px;
+}
+
+.privacy-modal-button {
+  width: 100%;
+  height: 48px;
+  margin-top: 20px;
+  border: none;
+  border-radius: 10px;
+  background: #181818;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.privacy-modal-button:hover {
+  background: #bb9c62;
 }
 
 /* DERECHA */
@@ -1640,6 +1754,14 @@ button {
     text-align: center;
   }
 
+  .privacy-modal {
+    padding: 28px 22px;
+  }
+
+  .privacy-modal h2 {
+    font-size: 30px;
+  }
+
   /*Descuento Tablet*/
 
   .discount-hero {
@@ -1873,6 +1995,10 @@ button {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+  }
+
+  .login-social-buttons {
+    flex-direction: column;
   }
 
   /*Register Celular*/

@@ -8,6 +8,7 @@ import {
   FaApple,
   FaEye,
   FaEyeSlash,
+  FaTimes,
 } from "react-icons/fa";
 
 import registerVisual from "../imagenes/login_slide1.png";
@@ -17,6 +18,7 @@ function Register() {
   const [userType, setUserType] = useState("comprador");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -142,7 +144,13 @@ function Register() {
 
           <div className="register-bottom-info">
             <p>Copyright © 2026 Velmora.</p>
-            <a href="#">Política de privacidad</a>
+            <button
+              type="button"
+              className="privacy-link"
+              onClick={() => setShowPrivacyModal(true)}
+            >
+              Política de privacidad
+            </button>
           </div>
         </div>
 
@@ -165,6 +173,79 @@ function Register() {
           </div>
         </div>
       </section>
+
+      {showPrivacyModal && (
+        <div
+          className="privacy-modal-overlay"
+          role="presentation"
+          onClick={() => setShowPrivacyModal(false)}
+        >
+          <section
+            className="privacy-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="privacy-modal-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="privacy-modal-close"
+              aria-label="Cerrar politica de privacidad"
+              onClick={() => setShowPrivacyModal(false)}
+            >
+              <FaTimes />
+            </button>
+
+            <p className="privacy-modal-label">Velmora</p>
+            <h2 id="privacy-modal-title">Politica y privacidad</h2>
+
+            <div className="privacy-modal-content">
+              <p>
+                Esta politica describe de forma general como Velmora podria
+                recopilar, usar y proteger la informacion proporcionada por sus
+                usuarios dentro de la plataforma.
+              </p>
+
+              <h3>Informacion que podemos recopilar</h3>
+              <p>
+                Podemos solicitar datos como nombre, correo electronico,
+                preferencias de usuario y datos relacionados con tiendas o
+                catalogos cuando el usuario decida registrarse o interactuar
+                con la plataforma.
+              </p>
+
+              <h3>Uso de la informacion</h3>
+              <p>
+                La informacion se usaria para crear cuentas, mejorar la
+                experiencia, mostrar contenido relevante, gestionar
+                comunicaciones y mantener la seguridad del servicio.
+              </p>
+
+              <h3>Proteccion y responsabilidad</h3>
+              <p>
+                Velmora buscaria aplicar medidas razonables para proteger los
+                datos personales. El usuario tambien es responsable de mantener
+                segura su cuenta y no compartir sus credenciales.
+              </p>
+
+              <h3>Terminos generales</h3>
+              <p>
+                Al usar Velmora, el usuario acepta utilizar la plataforma de
+                manera responsable, respetar a otros usuarios y no publicar
+                contenido falso, ofensivo o que infrinja derechos de terceros.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              className="privacy-modal-button"
+              onClick={() => setShowPrivacyModal(false)}
+            >
+              Entendido
+            </button>
+          </section>
+        </div>
+      )}
     </main>
   );
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaEnvelope, FaLock, FaGoogle, FaEye } from "react-icons/fa";
+import { FaEnvelope, FaLock, FaGoogle, FaApple, FaEye } from "react-icons/fa";
 
 import logoVelmora from "../imagenes/Logo_velmora_t.png";
 import slide1 from "../imagenes/login_slide1.png";
@@ -126,10 +126,17 @@ function Login() {
               <span></span>
             </div>
 
-            <button type="button" className="google-button">
-              <FaGoogle />
-              Continuar con Google
-            </button>
+            <div className="login-social-buttons">
+              <button type="button" className="google-button">
+                <FaGoogle />
+                Google
+              </button>
+
+              <button type="button" className="apple-button">
+                <FaApple />
+                Apple
+              </button>
+            </div>
 
             <p className="login-register-text">
               ¿No tienes cuenta? <Link to="/registro">Regístrate</Link>
