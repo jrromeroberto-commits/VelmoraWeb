@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaEnvelope, FaLock, FaGoogle, FaEye } from "react-icons/fa";
+import {
+  FaEnvelope,
+  FaLock,
+  FaGoogle,
+  FaApple,
+  FaEye,
+  FaEyeSlash,
+} from "react-icons/fa";
 
 import logoVelmora from "../imagenes/Logo_velmora_t.png";
 import slide1 from "../imagenes/login_slide1.png";
