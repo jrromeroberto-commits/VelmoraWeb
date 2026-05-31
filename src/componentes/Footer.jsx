@@ -41,14 +41,14 @@ function Footer() {
           <Link to="/">Inicio</Link>
           <a href="#tiendas">Tiendas</a>
           <a href="#categorias">Categorías</a>
-          <a href="#descuentos">Descuentos</a>
+          <Link to="/descuentos">Descuentos</Link>
         </section>
 
         <section className="footer-column">
           <h3>Para tiendas</h3>
           <Link to="/registro">Únete</Link>
           <a href="#beneficios">Beneficios</a>
-          <a href="#descuentos">Descuentos</a>
+          <Link to="/descuentos">Descuentos</Link>
         </section>
 
         <section className="footer-column">
