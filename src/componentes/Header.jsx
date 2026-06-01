@@ -27,16 +27,27 @@ function Header({ currentUser, onLogout }) {
         <Link to="/categorias">Categorías</Link>
         <a href="#anuncios" onClick={closeMenu}>Anuncios</a>
 
-        {isSeller && (
-          <Link to={sellerPanelPath} onClick={closeMenu}>
-            Panel
-          </Link>
-        )}
-
         {currentUser ? (
-          <Link to="/mi-cuenta" onClick={closeMenu} className="mobile-only">
-            Mi cuenta
-          </Link>
+          <>
+            {isSeller && (
+              <Link to={sellerPanelPath} onClick={closeMenu} className="mobile-only">
+                Panel
+              </Link>
+            )}
+            <Link to="/mi-cuenta" onClick={closeMenu} className="mobile-only">
+              Mi cuenta
+            </Link>
+            <button
+              type="button"
+              className="mobile-only mobile-logout"
+              onClick={() => {
+                onLogout();
+                closeMenu();
+              }}
+            >
+              Salir
+            </button>
+          </>
         ) : (
           <>
             <Link to="/registro" onClick={closeMenu} className="mobile-only">

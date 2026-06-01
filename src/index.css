@@ -108,6 +108,22 @@ button {
     display: none;
   }
 
+.mobile-logout {
+  border: none;
+  background: transparent;
+  color: #111;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 0;
+}
+
+.mobile-logout:hover {
+  color: #b59b63;
+}
+
 .hamburger{
   display: none;
   width: 28px;
@@ -2649,7 +2665,8 @@ button {
     right: 0;
   }
 
-  .header-nav a{
+  .header-nav a,
+  .mobile-logout{
     font-size: 15px;
   }
 
@@ -3097,7 +3114,8 @@ button {
     gap: 22px;
   }
 
-  .header-nav a {
+  .header-nav a,
+  .mobile-logout {
     font-size: 14px;
     letter-spacing: 0.8px;
   }
