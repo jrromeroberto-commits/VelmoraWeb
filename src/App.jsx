@@ -11,6 +11,7 @@ import Discounts from "./pages/Discounts";
 import SellerOnboarding from "./pages/SellerOnboarding";
 import SellerDashboard from "./pages/SellerDashboard";
 import Account from "./pages/Account";
+import Categories from "./pages/Categories";
 
 function Home() {
   return (
@@ -81,6 +82,7 @@ function App() {
         <Route path="/registro" element={<Register onRegister={handleRegister} />} />
         <Route path="/mi-cuenta" element={<Account currentUser={currentUser} />} />
         <Route path="/descuentos" element={<Discounts />} />
+        <Route path="/categorias" element={<Categories />} />
         <Route
           path="/crear-tienda"
           element={<SellerOnboarding onStoreCreated={handleStoreCreated} />}

@@ -24,7 +24,7 @@ function Header({ currentUser, onLogout }) {
         <Link to="/descuentos" onClick={closeMenu}>
           Descuentos exclusivos
         </Link>
-        <a href="#categorias" onClick={closeMenu}>Categorias</a>
+        <Link to="/categorias">Categorías</Link>
         <a href="#anuncios" onClick={closeMenu}>Anuncios</a>
 
         {isSeller && (
