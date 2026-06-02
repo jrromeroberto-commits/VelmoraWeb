@@ -1,9 +1,11 @@
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import EventCard from "../componentes/EventCard"
 
 function Events() {
 
     const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
+    const navigate = useNavigate();
 
     return <main className="mt-40 pt-40">
         <div className="flex gap-12 w-full m-10 px-6 py-8 items-center justify-center ">
@@ -25,19 +27,13 @@ function Events() {
                 </p>
 
                 <div className="flex gap-4">
-                    <button className="bg-[#C9A86A] text-white rounded-lg hover:bg-[#966f27]" style={{
+                    <button onClick={() => navigate("/eventos/verificar-tienda")} className="bg-[#C9A86A] text-white rounded-lg hover:bg-[#966f27]" style={{
                         padding: "10px",
                         fontSize: "15px"
                     }}>
                         🧾 PUBLICAR EVENTO
                     </button>
 
-                    <button className="border px-8 py-3 rounded-lg hover:bg-[#cec7b9]" style={{
-                        padding: "10px",
-                        fontSize: "15px"
-                    }}>
-                        ¿CÓMO FUNCIONA?
-                    </button>
                 </div>
             </div>
         </div>

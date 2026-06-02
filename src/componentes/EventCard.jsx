@@ -18,7 +18,7 @@ function EventCard({ imagen, tipo, titular, descripcion, inicio, fin, tienda, on
 
         </div>
 
-        <div className="w-full" style={{ padding: "8px 8px" }}>
+        <div className="w-full" style={{ padding: "8px 8px", margin: "8px"}}>
 
             <p className="text-[#C9A86A] text-sm font-medium">
                 {tipo}
@@ -39,7 +39,7 @@ function EventCard({ imagen, tipo, titular, descripcion, inicio, fin, tienda, on
                 </span>
 
                 <button onClick={onVerMas} className="border rounded-lg hover:bg-[#cec7b9]" style={{
-                    padding: "6px 12px"
+                    padding: "6px 12px", marginRight: "5px"
                 }}>
                     Ver más →
                 </button>

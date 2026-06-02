@@ -13,6 +13,8 @@ import SellerDashboard from "./pages/SellerDashboard";
 import Account from "./pages/Account";
 import Categories from "./pages/Categories";
 import Events from "./pages/Events";
+import SellerVerification from "./pages/SellerVerification";
+import CreateEvent from "./pages/CreateEvent";
 
 function Home() {
   return (
@@ -93,6 +95,8 @@ function App() {
           element={<SellerDashboard store={sellerStore} />}
         />
         <Route path="/eventos" element={<Events/>}/>
+        <Route path="/eventos/verificar-tienda" element={<SellerVerification/>}/>
+        <Route path="/eventos/verificar-tienda/crear-evento" element={<CreateEvent/>}/>
       </Routes>
     </>
   );
