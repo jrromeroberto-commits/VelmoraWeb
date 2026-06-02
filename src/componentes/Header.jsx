@@ -25,7 +25,7 @@ function Header({ currentUser, onLogout }) {
           Descuentos exclusivos
         </Link>
         <Link to="/categorias">Categorías</Link>
-        <a href="#anuncios" onClick={closeMenu}>Anuncios</a>
+        <Link to="/eventos">Eventos</Link>
 
         {currentUser ? (
           <>

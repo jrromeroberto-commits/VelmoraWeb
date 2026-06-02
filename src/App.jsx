@@ -12,6 +12,7 @@ import SellerOnboarding from "./pages/SellerOnboarding";
 import SellerDashboard from "./pages/SellerDashboard";
 import Account from "./pages/Account";
 import Categories from "./pages/Categories";
+import Events from "./pages/Events";
 
 function Home() {
   return (
@@ -91,6 +92,7 @@ function App() {
           path="/panel"
           element={<SellerDashboard store={sellerStore} />}
         />
+        <Route path="/eventos" element={<Events/>}/>
       </Routes>
     </>
   );
