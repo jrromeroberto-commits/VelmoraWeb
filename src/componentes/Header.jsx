@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { FaShoppingBag } from "react-icons/fa";
 import logoVelmora from "../imagenes/Logo_velmora_t.png";
 
-function Header({ currentUser, onLogout }) {
+function Header({ currentUser, onLogout, cartCount, onCartOpen }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const closeMenu = () => {
@@ -24,8 +25,9 @@ function Header({ currentUser, onLogout }) {
         <Link to="/descuentos" onClick={closeMenu}>
           Descuentos exclusivos
         </Link>
-        <Link to="/categorias">Categorías</Link>
-        <Link to="/eventos">Eventos</Link>
+        <Link to="/categorias" onClick={closeMenu}>Categorías</Link>
+        <Link to="/eventos" onClick={closeMenu}>Eventos</Link>
+
 
         {currentUser ? (
           <>
@@ -77,8 +79,14 @@ function Header({ currentUser, onLogout }) {
         )}
 
         {(!currentUser || isBuyer) && (
-          <button className="header-cart" aria-label="Carrito de compras">
-            🛍️
+          <button
+            type="button"
+            className="header-cart"
+            aria-label="Abrir carrito de compras"
+            onClick={onCartOpen}
+          >
+            <FaShoppingBag />
+            {cartCount > 0 && <span>{cartCount}</span>}
           </button>
         )}
 

@@ -1,17 +1,14 @@
-import { useEffect, useState } from "react";
-import EventCard from "../componentes/EventCard";
+import { useState } from "react";
 import EventCardLocal from "../componentes/EventCardLocal";
 
 function AllEvents() {
 
-    const [eventos, setEventos] = useState([]);
-
-    useEffect(() => {
+    const [eventos] = useState(() => {
         const datos =
             JSON.parse(localStorage.getItem("eventos")) || [];
 
-        setEventos(datos);
-    }, []);
+        return datos;
+    });
 
     return <div>
         <h1 className="text-3xl" style={{ margin: "10px" }}>Todos los eventos</h1>

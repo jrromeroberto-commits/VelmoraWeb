@@ -15,7 +15,7 @@ import producto4 from "../imagenes/producto-4.png";
 
 import logoVelmora from "../imagenes/Logo_velmora_t.png";
 
-function Categories() {
+function Categories({ onAddToCart }) {
   const [activeCategory, setActiveCategory] = useState("Todas");
 
   const filterButtons = [
@@ -188,6 +188,13 @@ function Categories() {
                 <div className="category-product-info">
                   <h3>{product.name}</h3>
                   <p>{product.price}</p>
+                  <button
+                    type="button"
+                    className="category-cart-button"
+                    onClick={() => onAddToCart(product)}
+                  >
+                    Agregar al carrito
+                  </button>
                 </div>
               </article>
             ))
