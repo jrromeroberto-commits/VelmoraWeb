@@ -84,10 +84,36 @@ button {
 
 .header-cart {
   background: transparent;
-  border: none;
-  font-size: 20px;
-  padding: 0;
+  border: 1px solid #ddd2bd;
+  color: #111;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  padding: 7px 12px;
   cursor: pointer;
+  position: relative;
+}
+
+.header-cart:hover {
+  border-color: #bb9c62;
+  color: #bb9c62;
+}
+
+.header-cart span {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 50%;
+  background: #bb9c62;
+  color: #fffdf8;
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
+
+  position: absolute;
+  top: -9px;
+  right: -9px;
 }
 
 .header-logout {
@@ -122,6 +148,174 @@ button {
 
 .mobile-logout:hover {
   color: #b59b63;
+}
+
+.cart-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1800;
+  background: rgba(17, 17, 17, 0.42);
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.25s ease;
+}
+
+.cart-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.cart-drawer {
+  width: min(420px, 100%);
+  height: 100%;
+  margin-left: auto;
+  background: #fffdf8;
+  border-left: 1px solid #ddd2bd;
+  padding: 26px;
+  transform: translateX(100%);
+  transition: 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-overlay.active .cart-drawer {
+  transform: translateX(0);
+}
+
+.cart-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid #ddd2bd;
+  padding-bottom: 18px;
+}
+
+.cart-header p {
+  color: #bb9c62;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.cart-header h2 {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.cart-header button,
+.cart-item button,
+.cart-footer button {
+  border: 1px solid #ddd2bd;
+  background: transparent;
+  color: #111;
+  padding: 9px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.cart-header button:hover,
+.cart-item button:hover,
+.cart-footer button:hover {
+  border-color: #bb9c62;
+  color: #bb9c62;
+}
+
+.cart-empty {
+  margin: auto 0;
+  text-align: center;
+}
+
+.cart-empty h3 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.cart-empty p {
+  color: #777;
+  line-height: 1.5;
+}
+
+.cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px 0;
+  overflow-y: auto;
+}
+
+.cart-item {
+  display: grid;
+  grid-template-columns: 78px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid #eee4d3;
+  padding-bottom: 16px;
+}
+
+.cart-item img {
+  width: 78px;
+  height: 90px;
+  object-fit: cover;
+}
+
+.cart-item h3 {
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.cart-item p {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.cart-item span {
+  color: #777;
+  font-size: 13px;
+}
+
+.cart-footer {
+  margin-top: auto;
+  border-top: 1px solid #ddd2bd;
+  padding-top: 18px;
+}
+
+.cart-footer div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.cart-footer span {
+  color: #777;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.cart-footer strong {
+  font-size: 24px;
+}
+
+.cart-footer button {
+  width: 100%;
+  background: #111;
+  border-color: #111;
+  color: #fffdf8;
+}
+
+.cart-footer button:hover {
+  background: #bb9c62;
+  border-color: #bb9c62;
+  color: #fffdf8;
 }
 
 .hamburger{
@@ -1352,6 +1546,25 @@ button {
   color: #111;
   font-size: 15px;
   font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.category-cart-button {
+  width: 100%;
+  min-height: 38px;
+  border: 1px solid #111;
+  background: #111;
+  color: #fffdf8;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  transition: 0.2s ease;
+}
+
+.category-cart-button:hover {
+  background: #bb9c62;
+  border-color: #bb9c62;
 }
 
 .categories-empty-message {
