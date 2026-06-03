@@ -36,7 +36,7 @@ function Store(){
 
             <div className="store-grid">
                 {stores.map((store) =>(
-                    <article className="store-card-featured" key={stores.id}>
+                    <article className="store-card-featured" key={store.id}>
                         <img
                             src={store.logo}
                             alt={`Logo de ${store.name}`}

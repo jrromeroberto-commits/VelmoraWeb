@@ -521,11 +521,18 @@ button {
   gap: 70px;
 }
 
+.store-card-featured {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
 .store-logo-img {
   width: 250px;
   height: 250px;
   object-fit: contain;
-  margin-bottom: 8px;
+  margin: 0 auto 8px;
 }
 
 .store-card-featured h3{
@@ -2823,6 +2830,9 @@ button {
   border: 1px solid #ddd2bd;
   border-radius: 18px;
   padding: 30px 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
   transition: 0.25s ease;
 }
@@ -2833,9 +2843,10 @@ button {
 }
 
 .coupon-icon {
+  display: block;
   font-size: 36px;
   color: #bb9c62;
-  margin-bottom: 12px;
+  margin: 0 auto 12px;
 }
 
 .coupon-card h3 {
