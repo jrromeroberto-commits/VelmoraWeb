@@ -18,6 +18,7 @@ import SellerVerification from "./pages/SellerVerification";
 import CreateEvent from "./pages/CreateEvent";
 import AllEvents from "./pages/AllEvents";
 import Checkout from "./pages/Checkout";
+import Stores from "./pages/Stores";
 
 function Home() {
   return (
@@ -25,7 +26,6 @@ function Home() {
       <PromoBar />
       <Hero />
       <Store />
-      <Footer />
     </>
   );
 }
@@ -132,6 +132,7 @@ function App() {
         <Route path="/registro" element={<Register onRegister={handleRegister} />} />
         <Route path="/mi-cuenta" element={<Account currentUser={currentUser} />} />
         <Route path="/descuentos" element={<Discounts />} />
+        <Route path="/tiendas" element={<Stores sellerStore={sellerStore} />} />
         <Route
           path="/categorias"
           element={<Categories onAddToCart={handleAddToCart} />}
@@ -155,6 +156,8 @@ function App() {
         <Route path="/eventos/verificar-tienda/crear-evento" element={<CreateEvent/>}/>
         <Route path="/eventos/all-events" element={<AllEvents/>}/>
       </Routes>
+
+      <Footer />
     </>
   );
 }

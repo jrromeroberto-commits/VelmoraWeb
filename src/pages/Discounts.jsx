@@ -7,8 +7,6 @@ import {
   FaTicketAlt,
 } from "react-icons/fa";
 
-import Footer from "../componentes/Footer";
-
 import descuento1 from "../imagenes/descuento1.png";
 import descuento2 from "../imagenes/descuento2.png";
 import descuento3 from "../imagenes/descuento3.png";
@@ -92,8 +90,7 @@ function Discounts() {
       : discounts.filter((item) => item.category === activeCategory);
 
   return (
-    <>
-      <main className="discounts-page">
+    <main className="discounts-page">
         <section className="discount-hero">
           <div className="discount-hero-content">
             <p className="discount-label">Promociones especiales</p>
@@ -213,10 +210,7 @@ function Discounts() {
 
           <Link to="/registro">Unirme como vendedor</Link>
         </section>
-      </main>
-
-      <Footer />
-    </>
+    </main>
   );
 }
 
