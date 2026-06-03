@@ -13,6 +13,7 @@ import SellerOnboarding from "./pages/SellerOnboarding";
 import SellerDashboard from "./pages/SellerDashboard";
 import Account from "./pages/Account";
 import Categories from "./pages/Categories";
+import Checkout from "./pages/Checkout";
 
 function Home() {
   return (
@@ -130,6 +131,12 @@ function App() {
         <Route
           path="/categorias"
           element={<Categories onAddToCart={handleAddToCart} />}
+        />
+        <Route
+          path="/checkout"
+          element={
+            <Checkout cartItems={cartItems} onClearCart={handleClearCart} />
+          }
         />
         <Route
           path="/crear-tienda"
