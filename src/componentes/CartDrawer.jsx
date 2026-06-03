@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function CartDrawer({
   cartItems,
   isOpen,
@@ -61,6 +63,14 @@ function CartDrawer({
               <button type="button" onClick={onClearCart}>
                 Vaciar carrito
               </button>
+
+              <Link
+                to="/checkout"
+                className="cart-checkout-link"
+                onClick={onClose}
+              >
+                Finalizar compra
+              </Link>
             </div>
           </>
         )}
