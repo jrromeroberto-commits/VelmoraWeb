@@ -15,6 +15,7 @@ import Categories from "./pages/Categories";
 import Events from "./pages/Events";
 import SellerVerification from "./pages/SellerVerification";
 import CreateEvent from "./pages/CreateEvent";
+import AllEvents from "./pages/AllEvents";
 
 function Home() {
   return (
@@ -97,6 +98,7 @@ function App() {
         <Route path="/eventos" element={<Events/>}/>
         <Route path="/eventos/verificar-tienda" element={<SellerVerification/>}/>
         <Route path="/eventos/verificar-tienda/crear-evento" element={<CreateEvent/>}/>
+        <Route path="/eventos/all-events" element={<AllEvents/>}/>
       </Routes>
     </>
   );

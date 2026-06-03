@@ -16,10 +16,10 @@ function Events() {
             </div>
             <div>
                 <h1 className="text-5xl font-bold m-4">Eventos</h1>
-                <div className="flex items-center gap-2 my-4">
-                    <div className="w-22 h-[2px] bg-[#C9A86A]"></div>
+                <div className="flex items-center gap-2">
+                    <div className="w-22 h-0.5 bg-[#C9A86A]"></div>
                     <div className="w-2 h-2 rounded-full bg-[#C9A86A]"></div>
-                    <div className="w-22 h-[2px] bg-[#C9A86A]"></div>
+                    <div className="w-22 h-0.5 bg-[#C9A86A]"></div>
                 </div>
                 <p style={{ margin: "10pt" }}>
                     Descubre los eventos y promociones exclusivas
@@ -47,14 +47,14 @@ function Events() {
                     </h2>
 
                     <div className="flex items-center gap-2" style={{ marginLeft: "10px" }}>
-                        <div className="w-29 h-[2px] bg-[#C9A86A]"></div>
+                        <div className="w-29 h-0.5 bg-[#C9A86A]"></div>
                         <div className="w-2 h-2 rounded-full bg-[#C9A86A]"></div>
-                        <div className="w-29 h-[2px] bg-[#C9A86A]"></div>
+                        <div className="w-29 h-0.5 bg-[#C9A86A]"></div>
                     </div>
 
                 </div>
 
-                <button className="text-[#C9A86A]" style={{ marginRight: "10px" }}>
+                <button className="text-[#C9A86A] hover:text-amber-300" style={{ marginRight: "10px" }} onClick={() => navigate("/eventos/all-events")}>
                     Ver todos →
                 </button>
 
