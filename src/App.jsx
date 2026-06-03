@@ -5,6 +5,7 @@ import PromoBar from "./componentes/PromoBar";
 import Hero from "./componentes/Hero";
 import Store from "./componentes/Store";
 import Footer from "./componentes/Footer";
+import CartDrawer from "./componentes/CartDrawer";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Discounts from "./pages/Discounts";
@@ -25,6 +26,9 @@ function Home() {
 }
 
 function App() {
+  const [cartOpen, setCartOpen] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
+
   const [currentUser, setCurrentUser] = useState(() => {
     const savedUser = localStorage.getItem("velmoraUser");
     return savedUser ? JSON.parse(savedUser) : null;
@@ -72,9 +76,50 @@ function App() {
     setCurrentUser(null);
   };
 
+  const handleAddToCart = (product) => {
+    setCartItems((items) => {
+      const productInCart = items.find((item) => item.id === product.id);
+
+      if (productInCart) {
+        return items.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      }
+
+      return [...items, { ...product, quantity: 1 }];
+    });
+
+    setCartOpen(true);
+  };
+
+  const handleRemoveFromCart = (productId) => {
+    setCartItems((items) => items.filter((item) => item.id !== productId));
+  };
+
+  const handleClearCart = () => {
+    setCartItems([]);
+  };
+
+  const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+
   return (
     <>
-      <Header currentUser={currentUser} onLogout={handleLogout} />
+      <Header
+        currentUser={currentUser}
+        onLogout={handleLogout}
+        cartCount={cartCount}
+        onCartOpen={() => setCartOpen(true)}
+      />
+
+      <CartDrawer
+        cartItems={cartItems}
+        isOpen={cartOpen}
+        onClose={() => setCartOpen(false)}
+        onClearCart={handleClearCart}
+        onRemoveFromCart={handleRemoveFromCart}
+      />
 
       <Routes>
         <Route path="/" element={<Home />} />
@@ -82,7 +127,10 @@ function App() {
         <Route path="/registro" element={<Register onRegister={handleRegister} />} />
         <Route path="/mi-cuenta" element={<Account currentUser={currentUser} />} />
         <Route path="/descuentos" element={<Discounts />} />
-        <Route path="/categorias" element={<Categories />} />
+        <Route
+          path="/categorias"
+          element={<Categories onAddToCart={handleAddToCart} />}
+        />
         <Route
           path="/crear-tienda"
           element={<SellerOnboarding onStoreCreated={handleStoreCreated} />}
