@@ -9,32 +9,30 @@ import {
   FaTag,
 } from "react-icons/fa";
 
+const createEmptyProduct = () => ({
+  id: Date.now() + Math.random(),
+  name: "",
+  category: "",
+  price: "",
+  stock: "",
+  description: "",
+  sizes: "",
+  colors: "",
+  imagePreview: "",
+});
+
 function SellerOnboarding({ onStoreCreated }) {
   const navigate = useNavigate();
   const [storeType, setStoreType] = useState("interna");
-  const [products, setProducts] = useState([
-    {
-      id: 1,
-      name: "Casaca urbana",
-      category: "Prendas urbanas",
-      price: "89.90",
-      stock: "18",
-    },
-    {
-      id: 2,
-      name: "Polo oversize",
-      category: "Polos",
-      price: "49.90",
-      stock: "32",
-    },
-  ]);
+  const [products, setProducts] = useState([createEmptyProduct()]);
+  const [logoPreview, setLogoPreview] = useState("");
   const [storeData, setStoreData] = useState({
-    storeName: "Urban Flow",
-    description: "Moda urbana seleccionada para outfits diarios.",
-    category: "Ropa urbana",
+    storeName: "",
+    description: "",
+    category: "",
     website: "",
-    instagram: "@urbanflow",
-    phone: "+51 999 999 999",
+    instagram: "",
+    phone: "",
   });
 
   const handleStoreChange = (event) => {
@@ -51,24 +49,56 @@ function SellerOnboarding({ onStoreCreated }) {
   };
 
   const addProduct = () => {
-    setProducts((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        name: "Nueva prenda",
-        category: "Categoria",
-        price: "0.00",
-        stock: "0",
-      },
-    ]);
+    setProducts((prev) => [...prev, createEmptyProduct()]);
+  };
+
+  const handleProductImageChange = (id, event) => {
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      handleProductChange(id, "imagePreview", reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleLogoChange = (event) => {
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setLogoPreview(reader.result);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    const completedProducts = products
+      .filter((product) => product.name.trim())
+      .map((product) => ({
+        ...product,
+        price: product.price.trim().startsWith("S/")
+          ? product.price.trim()
+          : `S/ ${product.price.trim() || "0.00"}`,
+        sizes: product.sizes
+          ? product.sizes.split(",").map((size) => size.trim()).filter(Boolean)
+          : ["Unica"],
+        colors: product.colors
+          ? product.colors.split(",").map((color) => color.trim()).filter(Boolean)
+          : ["Disponible"],
+      }));
+
     onStoreCreated({
       ...storeData,
+      logoPreview,
       storeType,
-      products,
+      products: completedProducts,
     });
     navigate("/panel");
   };
@@ -96,10 +126,23 @@ function SellerOnboarding({ onStoreCreated }) {
 
           <div className="seller-logo-uploader">
             <div>
-              <FaCamera />
-              <span>Colocar logo aqui</span>
+              {logoPreview ? (
+                <img src={logoPreview} alt="Logo de la tienda" />
+              ) : (
+                <>
+                  <FaCamera />
+                  <span>Colocar logo aqui</span>
+                </>
+              )}
             </div>
             <p>PNG o JPG recomendado, fondo limpio y buena resolucion.</p>
+            <input
+              type="file"
+              id="store-logo"
+              accept="image/*"
+              onChange={handleLogoChange}
+            />
+            <label htmlFor="store-logo">Seleccionar logo</label>
           </div>
 
           <label>
@@ -108,6 +151,8 @@ function SellerOnboarding({ onStoreCreated }) {
               name="storeName"
               value={storeData.storeName}
               onChange={handleStoreChange}
+              placeholder="Nombre comercial de tu tienda"
+              required
             />
           </label>
 
@@ -117,6 +162,8 @@ function SellerOnboarding({ onStoreCreated }) {
               name="description"
               value={storeData.description}
               onChange={handleStoreChange}
+              placeholder="Describe el estilo, productos y propuesta de tu tienda"
+              required
             />
           </label>
 
@@ -126,7 +173,9 @@ function SellerOnboarding({ onStoreCreated }) {
               name="category"
               value={storeData.category}
               onChange={handleStoreChange}
+              required
             >
+              <option value="">Selecciona una categoria</option>
               <option>Ropa urbana</option>
               <option>Ropa deportiva</option>
               <option>Calzado</option>
@@ -162,6 +211,7 @@ function SellerOnboarding({ onStoreCreated }) {
                   value={storeData.website}
                   onChange={handleStoreChange}
                   placeholder="https://mitienda.com"
+                  required={storeType === "externa"}
                 />
               </div>
             </label>
@@ -175,6 +225,7 @@ function SellerOnboarding({ onStoreCreated }) {
                 name="instagram"
                 value={storeData.instagram}
                 onChange={handleStoreChange}
+                placeholder="@nombre_de_tienda"
               />
             </div>
           </label>
@@ -185,6 +236,8 @@ function SellerOnboarding({ onStoreCreated }) {
               name="phone"
               value={storeData.phone}
               onChange={handleStoreChange}
+              placeholder="+51 999 999 999"
+              required
             />
           </label>
         </section>
@@ -201,11 +254,27 @@ function SellerOnboarding({ onStoreCreated }) {
           <div className="seller-products-editor">
             {products.map((product) => (
               <article className="seller-product-row" key={product.id}>
+                <div className="seller-product-image-upload">
+                  {product.imagePreview ? (
+                    <img src={product.imagePreview} alt={product.name || "Producto"} />
+                  ) : (
+                    <span>Imagen</span>
+                  )}
+                  <input
+                    type="file"
+                    id={`product-image-${product.id}`}
+                    accept="image/*"
+                    onChange={(event) => handleProductImageChange(product.id, event)}
+                  />
+                  <label htmlFor={`product-image-${product.id}`}>Subir</label>
+                </div>
+
                 <input
                   value={product.name}
                   onChange={(event) =>
                     handleProductChange(product.id, "name", event.target.value)
                   }
+                  placeholder="Nombre de prenda"
                   aria-label="Nombre del producto"
                 />
                 <input
@@ -213,6 +282,7 @@ function SellerOnboarding({ onStoreCreated }) {
                   onChange={(event) =>
                     handleProductChange(product.id, "category", event.target.value)
                   }
+                  placeholder="Categoria"
                   aria-label="Categoria del producto"
                 />
                 <input
@@ -220,6 +290,7 @@ function SellerOnboarding({ onStoreCreated }) {
                   onChange={(event) =>
                     handleProductChange(product.id, "price", event.target.value)
                   }
+                  placeholder="Precio"
                   aria-label="Precio del producto"
                 />
                 <input
@@ -227,7 +298,32 @@ function SellerOnboarding({ onStoreCreated }) {
                   onChange={(event) =>
                     handleProductChange(product.id, "stock", event.target.value)
                   }
+                  placeholder="Stock"
                   aria-label="Stock del producto"
+                />
+                <input
+                  value={product.sizes}
+                  onChange={(event) =>
+                    handleProductChange(product.id, "sizes", event.target.value)
+                  }
+                  placeholder="Tallas: S, M, L"
+                  aria-label="Tallas disponibles"
+                />
+                <input
+                  value={product.colors}
+                  onChange={(event) =>
+                    handleProductChange(product.id, "colors", event.target.value)
+                  }
+                  placeholder="Colores: Negro, Blanco"
+                  aria-label="Colores disponibles"
+                />
+                <textarea
+                  value={product.description}
+                  onChange={(event) =>
+                    handleProductChange(product.id, "description", event.target.value)
+                  }
+                  placeholder="Descripcion de la prenda"
+                  aria-label="Descripcion del producto"
                 />
               </article>
             ))}

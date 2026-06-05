@@ -19,6 +19,7 @@ import CreateEvent from "./pages/CreateEvent";
 import AllEvents from "./pages/AllEvents";
 import Checkout from "./pages/Checkout";
 import Stores from "./pages/Stores";
+import StoreCatalog from "./pages/StoreCatalog";
 
 function Home() {
   return (
@@ -29,6 +30,14 @@ function Home() {
     </>
   );
 }
+
+const getSavedUsers = () => JSON.parse(localStorage.getItem("velmoraUsers")) || [];
+
+const getSessionUser = (user) => {
+  const sessionUser = { ...user };
+  delete sessionUser.password;
+  return sessionUser;
+};
 
 function App() {
   const [cartOpen, setCartOpen] = useState(false);
@@ -42,6 +51,17 @@ function App() {
   const [sellerStore, setSellerStore] = useState(() => {
     const savedStore = localStorage.getItem("velmoraStore");
     return savedStore ? JSON.parse(savedStore) : null;
+  });
+
+  const [sellerStores, setSellerStores] = useState(() => {
+    const savedStores = localStorage.getItem("velmoraStores");
+
+    if (savedStores) {
+      return JSON.parse(savedStores);
+    }
+
+    const savedStore = localStorage.getItem("velmoraStore");
+    return savedStore ? [JSON.parse(savedStore)] : [];
   });
 
   useEffect(() => {
@@ -60,21 +80,87 @@ function App() {
     }
   }, [sellerStore]);
 
-  const handleRegister = (role) => {
-    setCurrentUser({
-      role,
-      name: role === "vendedor" ? "Tienda Velmora" : "Cliente Velmora",
-      setupComplete: role === "comprador",
-    });
+  useEffect(() => {
+    localStorage.setItem("velmoraStores", JSON.stringify(sellerStores));
+  }, [sellerStores]);
+
+  const handleRegister = (userData) => {
+    const savedUsers = getSavedUsers();
+    const emailExists = savedUsers.some(
+      (user) => user.email.toLowerCase() === userData.email.toLowerCase()
+    );
+
+    if (emailExists) {
+      return {
+        success: false,
+        message: "Ya existe una cuenta registrada con ese correo.",
+      };
+    }
+
+    const newUser = {
+      id: Date.now(),
+      name: userData.name,
+      email: userData.email,
+      password: userData.password,
+      role: userData.role,
+      setupComplete: userData.role === "comprador",
+    };
+
+    localStorage.setItem("velmoraUsers", JSON.stringify([...savedUsers, newUser]));
+    setCurrentUser(getSessionUser(newUser));
+
+    return { success: true };
+  };
+
+  const handleLogin = ({ email, password }) => {
+    const savedUsers = getSavedUsers();
+    const foundUser = savedUsers.find(
+      (user) =>
+        user.email.toLowerCase() === email.toLowerCase() &&
+        user.password === password
+    );
+
+    if (!foundUser) {
+      return {
+        success: false,
+        message: "Correo o contrasena incorrectos.",
+      };
+    }
+
+    setCurrentUser(getSessionUser(foundUser));
+    return { success: true, user: foundUser };
   };
 
   const handleStoreCreated = (storeData) => {
-    setSellerStore(storeData);
-    setCurrentUser({
+    const newStore = {
+      ...storeData,
+      id: Date.now(),
+      createdAt: new Date().toISOString(),
+    };
+
+    setSellerStore(newStore);
+    setSellerStores((stores) => [newStore, ...stores]);
+    setCurrentUser((user) => ({
+      ...user,
+      name: newStore.storeName || "Tienda Velmora",
       role: "vendedor",
-      name: storeData.storeName || "Tienda Velmora",
       setupComplete: true,
-    });
+    }));
+
+    if (currentUser?.email) {
+      const savedUsers = getSavedUsers();
+      const updatedUsers = savedUsers.map((user) =>
+        user.email === currentUser.email
+          ? {
+              ...user,
+              name: newStore.storeName || user.name,
+              setupComplete: true,
+            }
+          : user
+      );
+
+      localStorage.setItem("velmoraUsers", JSON.stringify(updatedUsers));
+    }
   };
 
   const handleLogout = () => {
@@ -82,25 +168,32 @@ function App() {
   };
 
   const handleAddToCart = (product) => {
+    const cartKey = [
+      product.id,
+      product.selectedSize || "",
+      product.selectedColor || "",
+      product.storeId || "",
+    ].join("-");
+
     setCartItems((items) => {
-      const productInCart = items.find((item) => item.id === product.id);
+      const productInCart = items.find((item) => item.cartKey === cartKey);
 
       if (productInCart) {
         return items.map((item) =>
-          item.id === product.id
+          item.cartKey === cartKey
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       }
 
-      return [...items, { ...product, quantity: 1 }];
+      return [...items, { ...product, cartKey, quantity: 1 }];
     });
 
     setCartOpen(true);
   };
 
   const handleRemoveFromCart = (productId) => {
-    setCartItems((items) => items.filter((item) => item.id !== productId));
+    setCartItems((items) => items.filter((item) => item.cartKey !== productId));
   };
 
   const handleClearCart = () => {
@@ -128,11 +221,20 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/registro" element={<Register onRegister={handleRegister} />} />
         <Route path="/mi-cuenta" element={<Account currentUser={currentUser} />} />
         <Route path="/descuentos" element={<Discounts />} />
-        <Route path="/tiendas" element={<Stores sellerStore={sellerStore} />} />
+        <Route path="/tiendas" element={<Stores sellerStores={sellerStores} />} />
+        <Route
+          path="/tiendas/:storeId"
+          element={
+            <StoreCatalog
+              sellerStores={sellerStores}
+              onAddToCart={handleAddToCart}
+            />
+          }
+        />
         <Route
           path="/categorias"
           element={<Categories onAddToCart={handleAddToCart} />}

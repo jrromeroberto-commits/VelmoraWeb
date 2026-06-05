@@ -54,11 +54,14 @@ function Checkout({ cartItems, onClearCart }) {
             <h2>Resumen del pedido</h2>
 
             {cartItems.map((item) => (
-              <article className="checkout-item" key={item.id}>
+              <article className="checkout-item" key={item.cartKey}>
                 <img src={item.image} alt={item.name} />
                 <div>
                   <h3>{item.name}</h3>
                   <p>{item.price}</p>
+                  {item.storeName && <span>Tienda: {item.storeName}</span>}
+                  {item.selectedSize && <span>Talla: {item.selectedSize}</span>}
+                  {item.selectedColor && <span>Color: {item.selectedColor}</span>}
                   <span>Cantidad: {item.quantity}</span>
                 </div>
               </article>

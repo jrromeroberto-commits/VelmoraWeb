@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   FaEnvelope,
   FaLock,
@@ -14,12 +14,13 @@ import slide1 from "../imagenes/login_slide1.png";
 import slide2 from "../imagenes/login_slide2.png";
 import slide3 from "../imagenes/login_slide3.png";
 
-function Login() {
+function Login({ onLogin }) {
+  const navigate = useNavigate();
   const slides = [
     {
       image: slide1,
       title: "Descubre tiendas y marcas exclusivas",
-      text: "Explora colecciones seleccionadas, piezas únicas y las últimas tendencias en un solo lugar.",
+      text: "Explora colecciones seleccionadas, piezas unicas y las ultimas tendencias en un solo lugar.",
     },
     {
       image: slide2,
@@ -28,26 +29,46 @@ function Login() {
     },
     {
       image: slide3,
-      title: "Afíliate y haz crecer tu tienda",
-      text: "Publica tu catálogo, conecta con nuevos clientes y destaca tu marca dentro de Velmora.",
+      title: "Afiliate y haz crecer tu tienda",
+      text: "Publica tu catalogo, conecta con nuevos clientes y destaca tu marca dentro de Velmora.",
     },
   ];
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [formMessage, setFormMessage] = useState("");
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentSlide((prev) =>
-        prev === slides.length - 1 ? 0 : prev + 1
-      );
+      setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
     }, 4500);
 
     return () => clearInterval(interval);
   }, [slides.length]);
 
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((data) => ({ ...data, [name]: value }));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const result = onLogin({
+      email: formData.email.trim(),
+      password: formData.password,
+    });
+
+    if (!result.success) {
+      setFormMessage(result.message);
+      return;
+    }
+
+    navigate(result.user.role === "vendedor" ? "/panel" : "/");
   };
 
   return (
@@ -92,9 +113,7 @@ function Login() {
 
           <div className="login-heading">
             <h1>Hola de nuevo</h1>
-            <p>
-              Inicia sesión para continuar descubriendo lo mejor de la moda.
-            </p>
+            <p>Inicia sesion para continuar descubriendo lo mejor de la moda.</p>
           </div>
 
           <form className="login-form-new" onSubmit={handleSubmit}>
@@ -102,25 +121,34 @@ function Login() {
               Correo
               <div className="login-input-box">
                 <FaEnvelope />
-                <input type="email" placeholder="tu@email.com" />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="tu@email.com"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                />
               </div>
             </label>
 
             <label>
-              Contraseña
+              Contrasena
               <div className="login-input-box">
                 <FaLock />
                 <input
                   type={showPassword ? "text" : "password"}
-                  placeholder="••••••••••"
+                  name="password"
+                  placeholder="**********"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  required
                 />
                 <button
                   type="button"
                   className="toggle-password login-eye"
                   onClick={() => setShowPassword(!showPassword)}
-                  aria-label={
-                    showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
-                  }
+                  aria-label={showPassword ? "Ocultar contrasena" : "Mostrar contrasena"}
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
@@ -133,12 +161,14 @@ function Login() {
                 <span>Recordarme</span>
               </label>
 
-              <a href="#">¿Olvidaste tu contraseña?</a>
+              <a href="#">Olvidaste tu contrasena?</a>
             </div>
 
             <button type="submit" className="login-submit">
-              Iniciar sesión
+              Iniciar sesion
             </button>
+
+            {formMessage && <p className="auth-message error">{formMessage}</p>}
 
             <div className="login-separator">
               <span></span>
@@ -159,7 +189,7 @@ function Login() {
             </div>
 
             <p className="login-register-text">
-              ¿No tienes cuenta? <Link to="/registro">Regístrate</Link>
+              No tienes cuenta? <Link to="/registro">Registrate</Link>
             </p>
           </form>
         </div>

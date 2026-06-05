@@ -17,20 +17,48 @@ import logoVelmora from "../imagenes/Logo_velmora_t.png";
 function Register({ onRegister }) {
   const navigate = useNavigate();
   const [userType, setUserType] = useState("comprador");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [formMessage, setFormMessage] = useState("");
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((data) => ({ ...data, [name]: value }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onRegister(userType);
+
+    if (formData.password !== formData.confirmPassword) {
+      setFormMessage("Las contrasenas no coinciden.");
+      return;
+    }
+
+    const result = onRegister({
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      password: formData.password,
+      role: userType,
+    });
+
+    if (!result.success) {
+      setFormMessage(result.message);
+      return;
+    }
+
     navigate(userType === "vendedor" ? "/crear-tienda" : "/");
   };
 
   return (
     <main className="register-page-new">
       <section className="register-container-new">
-        {/* LADO IZQUIERDO */}
         <div className="register-form-side">
           <div className="register-brand-top">
             <img src={logoVelmora} alt="Logo Velmora" />
@@ -40,8 +68,8 @@ function Register({ onRegister }) {
           <div className="register-heading">
             <h1>Crear una cuenta</h1>
             <p>
-              Únete ahora para explorar tiendas, marcas, descuentos y gestionar
-              tu experiencia desde el primer día.
+              Unete ahora para explorar tiendas, marcas, descuentos y gestionar
+              tu experiencia desde el primer dia.
             </p>
           </div>
 
@@ -50,7 +78,14 @@ function Register({ onRegister }) {
               Nombre
               <div className="register-input-box">
                 <FaUser />
-                <input type="text" placeholder="Tu nombre completo" />
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Tu nombre completo"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  required
+                />
               </div>
             </label>
 
@@ -58,17 +93,28 @@ function Register({ onRegister }) {
               Correo
               <div className="register-input-box">
                 <FaEnvelope />
-                <input type="email" placeholder="tu@email.com" />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="tu@email.com"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                />
               </div>
             </label>
 
             <label>
-              Contraseña
+              Contrasena
               <div className="register-input-box">
                 <FaLock />
                 <input
                   type={showPassword ? "text" : "password"}
-                  placeholder="••••••••••"
+                  name="password"
+                  placeholder="**********"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  required
                 />
                 <button
                   type="button"
@@ -81,19 +127,21 @@ function Register({ onRegister }) {
             </label>
 
             <label>
-              Confirmar contraseña
+              Confirmar contrasena
               <div className="register-input-box">
                 <FaLock />
                 <input
                   type={showConfirmPassword ? "text" : "password"}
-                  placeholder="••••••••••"
+                  name="confirmPassword"
+                  placeholder="**********"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  required
                 />
                 <button
                   type="button"
                   className="toggle-password"
-                  onClick={() =>
-                    setShowConfirmPassword(!showConfirmPassword)
-                  }
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
                   {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
@@ -122,9 +170,11 @@ function Register({ onRegister }) {
               Registrarme
             </button>
 
+            {formMessage && <p className="auth-message error">{formMessage}</p>}
+
             <div className="register-separator">
               <span></span>
-              <p>o regístrate con</p>
+              <p>o registrate con</p>
               <span></span>
             </div>
 
@@ -141,23 +191,22 @@ function Register({ onRegister }) {
             </div>
 
             <p className="register-login-text">
-              ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
+              Ya tienes cuenta? <Link to="/login">Inicia sesion</Link>
             </p>
           </form>
 
           <div className="register-bottom-info">
-            <p>Copyright © 2026 Velmora.</p>
+            <p>Copyright 2026 Velmora.</p>
             <button
               type="button"
               className="privacy-link"
               onClick={() => setShowPrivacyModal(true)}
             >
-              Política de privacidad
+              Politica de privacidad
             </button>
           </div>
         </div>
 
-        {/* LADO DERECHO */}
         <div className="register-visual-side">
           <div className="register-visual-overlay"></div>
 
