@@ -1,0 +1,20 @@
+### Verificar servidor
+GET http://localhost:3000/
+
+### Listar categorias
+GET http://localhost:3000/api/categories
+
+### Ver categoria con productos
+GET http://localhost:3000/api/categories/1
+
+### Listar productos
+GET http://localhost:3000/api/products
+
+### Listar productos por categoria
+GET http://localhost:3000/api/products?categoryId=1
+
+### Listar tendencias
+GET http://localhost:3000/api/products/trending
+
+### Listar tendencias por categoria
+GET http://localhost:3000/api/products/trending?categoryId=5

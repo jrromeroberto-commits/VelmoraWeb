@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useCategories } from "../hooks/useCategories";
+import { useTrendingProducts } from "../hooks/useTrendingProducts";
 
 import categoriaHero from "../imagenes/categorias-hero.png";
 import categoriaUrbana from "../imagenes/categoria-urbana.png";
@@ -15,95 +17,109 @@ import producto4 from "../imagenes/producto-4.png";
 
 import logoVelmora from "../imagenes/Logo_velmora_t.png";
 
+const categoryImages = {
+  categoriaUrbana,
+  categoriaDeportiva,
+  categoriaCalzado,
+  categoriaAccesorios,
+  categoriaElegante,
+};
+
+const productImages = {
+  producto1,
+  producto2,
+  producto3,
+  producto4,
+};
+
+const fallbackCategories = [
+  {
+    id: 1,
+    name: "Ropa urbana",
+    imageKey: "categoriaUrbana",
+    description: "Looks casuales, modernos y cómodos para el día a día.",
+  },
+  {
+    id: 2,
+    name: "Ropa deportiva",
+    imageKey: "categoriaDeportiva",
+    description: "Prendas cómodas para entrenar o vestir con estilo sport.",
+  },
+  {
+    id: 3,
+    name: "Calzado",
+    imageKey: "categoriaCalzado",
+    description: "Zapatos, sandalias y zapatillas para cada ocasión.",
+  },
+  {
+    id: 4,
+    name: "Accesorios",
+    imageKey: "categoriaAccesorios",
+    description: "Bolsos, joyería, lentes y detalles para completar tu outfit.",
+  },
+  {
+    id: 5,
+    name: "Moda elegante",
+    imageKey: "categoriaElegante",
+    description: "Prendas sofisticadas para eventos, reuniones y ocasiones especiales.",
+  },
+];
+
+const fallbackTrends = [
+  {
+    id: 1,
+    name: "Chaleco de lino",
+    price: "S/ 149.90",
+    tag: "Nuevo",
+    category: "Moda elegante",
+    categoryId: 5,
+    imageKey: "producto1",
+  },
+  {
+    id: 2,
+    name: "Camisa satinada",
+    price: "S/ 119.90",
+    tag: "Top",
+    category: "Moda elegante",
+    categoryId: 5,
+    imageKey: "producto2",
+  },
+  {
+    id: 3,
+    name: "Bolso bucket",
+    price: "S/ 169.90",
+    tag: "Trend",
+    category: "Accesorios",
+    categoryId: 4,
+    imageKey: "producto3",
+  },
+  {
+    id: 4,
+    name: "Zapatillas urban style",
+    price: "S/ 209.90",
+    tag: "Sale",
+    category: "Ropa urbana",
+    categoryId: 1,
+    imageKey: "producto4",
+  },
+];
+
 function Categories({ onAddToCart }) {
-  const [activeCategory, setActiveCategory] = useState("Todas");
+  const [activeCategoryId, setActiveCategoryId] = useState("Todas");
+  const { categories, loading: categoriesLoading } = useCategories(fallbackCategories);
+  const selectedCategoryId =
+    activeCategoryId === "Todas" ? undefined : Number(activeCategoryId);
+  const { products: trends, loading: trendsLoading } = useTrendingProducts(
+    selectedCategoryId,
+    fallbackTrends
+  );
 
-  const filterButtons = [
-    "Todas",
-    "Ropa urbana",
-    "Ropa deportiva",
-    "Calzado",
-    "Accesorios",
-    "Moda elegante",
-  ];
-
-  const categories = [
-    {
-      id: 1,
-      name: "Ropa urbana",
-      image: categoriaUrbana,
-      description: "Looks casuales, modernos y cómodos para el día a día.",
-    },
-    {
-      id: 2,
-      name: "Ropa deportiva",
-      image: categoriaDeportiva,
-      description: "Prendas cómodas para entrenar o vestir con estilo sport.",
-    },
-    {
-      id: 3,
-      name: "Calzado",
-      image: categoriaCalzado,
-      description: "Zapatos, sandalias y zapatillas para cada ocasión.",
-    },
-    {
-      id: 4,
-      name: "Accesorios",
-      image: categoriaAccesorios,
-      description: "Bolsos, joyería, lentes y detalles para completar tu outfit.",
-    },
-    {
-      id: 5,
-      name: "Moda elegante",
-      image: categoriaElegante,
-      description: "Prendas sofisticadas para eventos, reuniones y ocasiones especiales.",
-    },
-  ];
-
-  const trends = [
-    {
-      id: 1,
-      name: "Chaleco de lino",
-      price: "S/ 149.90",
-      tag: "Nuevo",
-      category: "Moda elegante",
-      image: producto1,
-    },
-    {
-      id: 2,
-      name: "Camisa satinada",
-      price: "S/ 119.90",
-      tag: "Top",
-      category: "Moda elegante",
-      image: producto2,
-    },
-    {
-      id: 3,
-      name: "Bolso bucket",
-      price: "S/ 169.90",
-      tag: "Trend",
-      category: "Accesorios",
-      image: producto3,
-    },
-    {
-      id: 4,
-      name: "Zapatillas urban style",
-      price: "S/ 209.90",
-      tag: "Sale",
-      category: "Ropa urbana",
-      image: producto4,
-    },
-  ];
+  const filterButtons = ["Todas", ...categories.map((category) => category.name)];
 
   const filteredCategories =
-    activeCategory === "Todas"
+    activeCategoryId === "Todas"
       ? categories
-      : categories.filter((category) => category.name === activeCategory);
-
-  const filteredTrends =
-    activeCategory === "Todas"
-      ? trends
-      : trends.filter((product) => product.category === activeCategory);
+      : categories.filter((category) => category.id === selectedCategoryId);
 
   return (
     <main className="categories-page">
@@ -137,8 +153,19 @@ function Categories({ onAddToCart }) {
           {filterButtons.map((button) => (
             <button
               key={button}
-              className={activeCategory === button ? "active" : ""}
-              onClick={() => setActiveCategory(button)}
+              className={
+                (button === "Todas" && activeCategoryId === "Todas") ||
+                categories.find(
+                  (category) =>
+                    category.name === button && String(category.id) === String(activeCategoryId)
+                )
+                  ? "active"
+                  : ""
+              }
+              onClick={() => {
+                const category = categories.find((item) => item.name === button);
+                setActiveCategoryId(category ? String(category.id) : "Todas");
+              }}
             >
               {button}
             </button>
@@ -150,7 +177,10 @@ function Categories({ onAddToCart }) {
         <div className="categories-grid">
           {filteredCategories.map((category) => (
             <article className="category-card" key={category.id}>
-              <img src={category.image} alt={category.name} />
+              <img
+                src={categoryImages[category.imageKey] || categoriaHero}
+                alt={category.name}
+              />
 
               <div className="category-label">
                 <img src={logoVelmora} alt="Velmora" />
@@ -172,11 +202,14 @@ function Categories({ onAddToCart }) {
         </div>
 
         <div className="categories-products-grid">
-          {filteredTrends.length > 0 ? (
-            filteredTrends.map((product) => (
+          {trends.length > 0 ? (
+            trends.map((product) => (
               <article className="category-product-card" key={product.id}>
                 <div className="category-product-image">
-                  <img src={product.image} alt={product.name} />
+                  <img
+                    src={productImages[product.imageKey] || producto1}
+                    alt={product.name}
+                  />
 
                   <span>{product.tag}</span>
 
@@ -191,7 +224,12 @@ function Categories({ onAddToCart }) {
                   <button
                     type="button"
                     className="category-cart-button"
-                    onClick={() => onAddToCart(product)}
+                    onClick={() =>
+                      onAddToCart({
+                        ...product,
+                        image: productImages[product.imageKey] || producto1,
+                      })
+                    }
                   >
                     Agregar al carrito
                   </button>
@@ -200,7 +238,9 @@ function Categories({ onAddToCart }) {
             ))
           ) : (
             <p className="categories-empty-message">
-              Aún no hay tendencias registradas para esta categoría.
+              {categoriesLoading || trendsLoading
+                ? "Cargando categorias y tendencias..."
+                : "Aún no hay tendencias registradas para esta categoría."}
             </p>
           )}
         </div>
