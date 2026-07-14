@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useCategories } from "../hooks/useCategories";
+import { useFavorites } from "../hooks/useFavorites";
 import { useTrendingProducts } from "../hooks/useTrendingProducts";
 
 import categoriaHero from "../imagenes/categorias-hero.png";
@@ -38,30 +39,35 @@ const fallbackCategories = [
     name: "Ropa urbana",
     imageKey: "categoriaUrbana",
     description: "Looks casuales, modernos y cómodos para el día a día.",
+    productsCount: 1,
   },
   {
     id: 2,
     name: "Ropa deportiva",
     imageKey: "categoriaDeportiva",
     description: "Prendas cómodas para entrenar o vestir con estilo sport.",
+    productsCount: 0,
   },
   {
     id: 3,
     name: "Calzado",
     imageKey: "categoriaCalzado",
     description: "Zapatos, sandalias y zapatillas para cada ocasión.",
+    productsCount: 0,
   },
   {
     id: 4,
     name: "Accesorios",
     imageKey: "categoriaAccesorios",
     description: "Bolsos, joyería, lentes y detalles para completar tu outfit.",
+    productsCount: 1,
   },
   {
     id: 5,
     name: "Moda elegante",
     imageKey: "categoriaElegante",
     description: "Prendas sofisticadas para eventos, reuniones y ocasiones especiales.",
+    productsCount: 2,
   },
 ];
 
@@ -74,6 +80,7 @@ const fallbackTrends = [
     category: "Moda elegante",
     categoryId: 5,
     imageKey: "producto1",
+    rawPrice: 149.9,
   },
   {
     id: 2,
@@ -83,6 +90,7 @@ const fallbackTrends = [
     category: "Moda elegante",
     categoryId: 5,
     imageKey: "producto2",
+    rawPrice: 119.9,
   },
   {
     id: 3,
@@ -92,6 +100,7 @@ const fallbackTrends = [
     category: "Accesorios",
     categoryId: 4,
     imageKey: "producto3",
+    rawPrice: 169.9,
   },
   {
     id: 4,
@@ -101,16 +110,32 @@ const fallbackTrends = [
     category: "Ropa urbana",
     categoryId: 1,
     imageKey: "producto4",
+    rawPrice: 209.9,
   },
 ];
 
 function Categories({ onAddToCart }) {
   const [activeCategoryId, setActiveCategoryId] = useState("Todas");
+  const [search, setSearch] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [sort, setSort] = useState("newest");
   const { categories, loading: categoriesLoading } = useCategories(fallbackCategories);
+  const { favoriteIds, toggleFavorite } = useFavorites();
   const selectedCategoryId =
     activeCategoryId === "Todas" ? undefined : Number(activeCategoryId);
+  const productFilters = useMemo(
+    () => ({
+      categoryId: selectedCategoryId,
+      search,
+      minPrice,
+      maxPrice,
+      sort,
+    }),
+    [selectedCategoryId, search, minPrice, maxPrice, sort]
+  );
   const { products: trends, loading: trendsLoading } = useTrendingProducts(
-    selectedCategoryId,
+    productFilters,
     fallbackTrends
   );
 
@@ -171,6 +196,50 @@ function Categories({ onAddToCart }) {
             </button>
           ))}
         </div>
+
+        <div className="categories-search-panel">
+          <label>
+            Buscar
+            <input
+              type="search"
+              placeholder="Camisa, bolso, zapatillas..."
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+            />
+          </label>
+
+          <label>
+            Precio mínimo
+            <input
+              type="number"
+              min="0"
+              placeholder="S/ 0"
+              value={minPrice}
+              onChange={(event) => setMinPrice(event.target.value)}
+            />
+          </label>
+
+          <label>
+            Precio máximo
+            <input
+              type="number"
+              min="0"
+              placeholder="S/ 250"
+              value={maxPrice}
+              onChange={(event) => setMaxPrice(event.target.value)}
+            />
+          </label>
+
+          <label>
+            Ordenar
+            <select value={sort} onChange={(event) => setSort(event.target.value)}>
+              <option value="newest">Más recientes</option>
+              <option value="price_asc">Menor precio</option>
+              <option value="price_desc">Mayor precio</option>
+              <option value="name_asc">Nombre A-Z</option>
+            </select>
+          </label>
+        </div>
       </section>
 
       <section className="categories-grid-section">
@@ -187,6 +256,7 @@ function Categories({ onAddToCart }) {
                 <div>
                   <h3>{category.name}</h3>
                   <p>{category.description}</p>
+                  <strong>{category.productsCount || 0} productos disponibles</strong>
                 </div>
               </div>
             </article>
@@ -213,8 +283,19 @@ function Categories({ onAddToCart }) {
 
                   <span>{product.tag}</span>
 
-                  <button type="button" className="category-heart">
-                    ♡
+                  <button
+                    type="button"
+                    className={`category-heart ${
+                      favoriteIds.includes(product.id) ? "active" : ""
+                    }`}
+                    aria-label={
+                      favoriteIds.includes(product.id)
+                        ? "Quitar de favoritos"
+                        : "Agregar a favoritos"
+                    }
+                    onClick={() => toggleFavorite(product.id)}
+                  >
+                    {favoriteIds.includes(product.id) ? "♥" : "♡"}
                   </button>
                 </div>
 

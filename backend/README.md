@@ -23,3 +23,7 @@ El servidor usa `PORT=3000` por defecto.
 - `GET /api/products?categoryId=1`
 - `GET /api/products/trending`
 - `GET /api/products/trending?categoryId=1`
+- `GET /api/products/trending?search=camisa&minPrice=100&maxPrice=200&sort=price_asc`
+- `GET /api/favorites?userKey=guest-demo`
+- `POST /api/favorites`
+- `DELETE /api/favorites/:productId?userKey=guest-demo`
