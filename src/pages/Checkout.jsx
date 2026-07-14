@@ -1,19 +1,50 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { createOrder, getCheckoutSummary } from "../services/cartService";
 
 function Checkout({ cartItems, onClearCart }) {
   const [paymentMethod, setPaymentMethod] = useState("Tarjeta");
   const [orderSent, setOrderSent] = useState(false);
+  const [checkoutSummary, setCheckoutSummary] = useState(null);
+  const [checkoutError, setCheckoutError] = useState("");
+  const [isSendingOrder, setIsSendingOrder] = useState(false);
 
-  const total = cartItems.reduce((sum, item) => {
+  const localTotal = cartItems.reduce((sum, item) => {
     const price = Number(item.price.replace("S/ ", ""));
     return sum + price * item.quantity;
   }, 0);
+  const total = checkoutSummary?.total ?? localTotal;
 
-  const handleSubmit = (event) => {
+  useEffect(() => {
+    if (cartItems.length === 0) {
+      return;
+    }
+
+    getCheckoutSummary(cartItems)
+      .then((summary) => {
+        setCheckoutSummary(summary);
+        setCheckoutError("");
+      })
+      .catch((error) => {
+        setCheckoutSummary(null);
+        setCheckoutError(error.message);
+      });
+  }, [cartItems]);
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    setOrderSent(true);
-    onClearCart();
+    setIsSendingOrder(true);
+    setCheckoutError("");
+
+    try {
+      await createOrder(cartItems, { paymentMethod });
+      setOrderSent(true);
+      onClearCart();
+    } catch (error) {
+      setCheckoutError(error.message);
+    } finally {
+      setIsSendingOrder(false);
+    }
   };
 
   if (orderSent) {
@@ -23,8 +54,8 @@ function Checkout({ cartItems, onClearCart }) {
           <p>Compra simulada</p>
           <h1>Pedido registrado</h1>
           <span>
-            Tu pedido fue confirmado en la interfaz. Para pagos reales se
-            necesita conectar una pasarela segura.
+            Tu pedido fue registrado en el backend. Para pagos reales se
+            necesita conectar una pasarela segura externa.
           </span>
           <Link to="/categorias">Seguir comprando</Link>
         </section>
@@ -38,7 +69,8 @@ function Checkout({ cartItems, onClearCart }) {
         <p>Finalizar compra</p>
         <h1>Checkout</h1>
         <span>
-          Revisa tu pedido y selecciona un metodo de pago.
+          Revisa tu pedido y selecciona un metodo de pago. El pedido se
+          registra en el backend con Express y Prisma.
         </span>
       </section>
 
@@ -52,6 +84,12 @@ function Checkout({ cartItems, onClearCart }) {
         <section className="checkout-layout">
           <div className="checkout-summary">
             <h2>Resumen del pedido</h2>
+
+            {checkoutError && (
+              <p className="checkout-error">
+                {checkoutError}. Verifica que el backend este ejecutandose.
+              </p>
+            )}
 
             {cartItems.map((item) => (
               <article className="checkout-item" key={item.id}>
@@ -68,6 +106,15 @@ function Checkout({ cartItems, onClearCart }) {
               <span>Total a pagar</span>
               <strong>S/ {total.toFixed(2)}</strong>
             </div>
+
+            {checkoutSummary && (
+              <div className="checkout-backend-summary">
+                <span>Subtotal: S/ {checkoutSummary.subtotal.toFixed(2)}</span>
+                <span>
+                  Descuentos: S/ {checkoutSummary.discountAmount.toFixed(2)}
+                </span>
+              </div>
+            )}
           </div>
 
           <form className="checkout-form" onSubmit={handleSubmit}>
@@ -106,8 +153,14 @@ function Checkout({ cartItems, onClearCart }) {
 
 
 
-            <button type="submit" className="checkout-submit">
-              Confirmar pedido con {paymentMethod}
+            <button
+              type="submit"
+              className="checkout-submit"
+              disabled={isSendingOrder || cartItems.length === 0}
+            >
+              {isSendingOrder
+                ? "Registrando pedido..."
+                : `Confirmar pedido con ${paymentMethod}`}
             </button>
           </form>
         </section>

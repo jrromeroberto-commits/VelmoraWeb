@@ -1338,6 +1338,34 @@ button {
   font-size: 28px;
 }
 
+.checkout-error {
+  border: 1px solid #ddd2bd;
+  background: #fff;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 14px;
+  padding: 12px;
+}
+
+.checkout-error {
+  border-color: #c77474;
+  color: #8a2f2f;
+}
+
+.checkout-backend-summary {
+  border-top: 1px solid #eee4d3;
+  display: grid;
+  gap: 6px;
+  margin-top: 14px;
+  padding-top: 14px;
+}
+
+.checkout-backend-summary span {
+  color: #777;
+  font-size: 13px;
+}
+
 .checkout-form label {
   display: block;
   color: #333;
@@ -1414,6 +1442,11 @@ button {
 .checkout-empty a:hover,
 .checkout-success a:hover {
   background: #bb9c62;
+}
+
+.checkout-submit:disabled {
+  background: #777;
+  cursor: not-allowed;
 }
 
 .checkout-empty,
