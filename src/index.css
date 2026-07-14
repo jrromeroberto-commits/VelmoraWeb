@@ -1362,6 +1362,16 @@ button {
   font-size: 28px;
 }
 
+.checkout-discount-total {
+  color: #1f8a5b;
+  border-top: 1px solid #eee4d3;
+}
+
+.checkout-discount-total span,
+.checkout-discount-total strong {
+  color: #1f8a5b;
+}
+
 .checkout-form label {
   display: block;
   color: #333;
@@ -1414,6 +1424,54 @@ button {
   background: #111;
   border-color: #111;
   color: #fffdf8;
+}
+
+.checkout-coupon-box {
+  border: 1px solid #eee4d3;
+  background: #fffdf8;
+  padding: 14px;
+  margin: 4px 0 18px;
+}
+
+.checkout-coupon-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.checkout-coupon-row input {
+  margin-top: 0;
+  text-transform: uppercase;
+}
+
+.checkout-coupon-row button {
+  min-width: 96px;
+  border: 1px solid #111;
+  background: #111;
+  color: #fffdf8;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.checkout-coupon-row button:disabled {
+  opacity: 0.65;
+}
+
+.checkout-coupon-message {
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.checkout-coupon-message.success {
+  color: #1f8a5b;
+}
+
+.checkout-coupon-message.error {
+  color: #b3261e;
 }
 
 .checkout-submit,

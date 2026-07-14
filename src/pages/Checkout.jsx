@@ -1,19 +1,29 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import useCoupons from "../hooks/useCoupons";
+import { formatSoles, getCartSubtotal } from "../services/pricingService";
 
 function Checkout({ cartItems, onClearCart }) {
   const [paymentMethod, setPaymentMethod] = useState("Tarjeta");
   const [orderSent, setOrderSent] = useState(false);
+  const {
+    couponCode,
+    setCouponCode,
+    couponResult,
+    couponLoading,
+    applyCoupon,
+    clearCoupon,
+  } = useCoupons();
 
-  const total = cartItems.reduce((sum, item) => {
-    const price = Number(item.price.replace("S/ ", ""));
-    return sum + price * item.quantity;
-  }, 0);
+  const subtotal = getCartSubtotal(cartItems);
+  const discountAmount = couponResult?.valid ? couponResult.discountAmount : 0;
+  const total = couponResult?.valid ? couponResult.total : subtotal;
 
   const handleSubmit = (event) => {
     event.preventDefault();
     setOrderSent(true);
     onClearCart();
+    clearCoupon();
   };
 
   if (orderSent) {
@@ -68,8 +78,20 @@ function Checkout({ cartItems, onClearCart }) {
             ))}
 
             <div className="checkout-total">
+              <span>Subtotal</span>
+              <strong>{formatSoles(subtotal)}</strong>
+            </div>
+
+            {couponResult?.valid && (
+              <div className="checkout-total checkout-discount-total">
+                <span>Descuento {couponResult.coupon.code}</span>
+                <strong>-{formatSoles(discountAmount)}</strong>
+              </div>
+            )}
+
+            <div className="checkout-total">
               <span>Total a pagar</span>
-              <strong>S/ {total.toFixed(2)}</strong>
+              <strong>{formatSoles(total)}</strong>
             </div>
           </div>
 
@@ -106,8 +128,32 @@ function Checkout({ cartItems, onClearCart }) {
               ))}
             </div>
 
+            <div className="checkout-coupon-box">
+              <label>
+                Cupon promocional
+                <div className="checkout-coupon-row">
+                  <input
+                    type="text"
+                    placeholder="VELMORA50"
+                    value={couponCode}
+                    onChange={(event) => setCouponCode(event.target.value.toUpperCase())}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => applyCoupon(cartItems)}
+                    disabled={couponLoading}
+                  >
+                    {couponLoading ? "Validando" : "Aplicar"}
+                  </button>
+                </div>
+              </label>
 
-
+              {couponResult && (
+                <p className={`checkout-coupon-message ${couponResult.valid ? "success" : "error"}`}>
+                  {couponResult.message}
+                </p>
+              )}
+            </div>
 
             <button type="submit" className="checkout-submit">
               Confirmar pedido con {paymentMethod}

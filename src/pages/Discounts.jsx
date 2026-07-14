@@ -6,88 +6,12 @@ import {
   FaStore,
   FaTicketAlt,
 } from "react-icons/fa";
-
-import descuento1 from "../imagenes/descuento1.png";
-import descuento2 from "../imagenes/descuento2.png";
-import descuento3 from "../imagenes/descuento3.png";
-import descuento4 from "../imagenes/descuento4.png";
-import descuento5 from "../imagenes/descuento5.png";
-import descuento6 from "../imagenes/descuento6.png";
+import useDiscounts from "../hooks/useDiscounts";
+import { discountCategories } from "../services/discountService";
 
 function Discounts() {
   const [activeCategory, setActiveCategory] = useState("Todos");
-
-  const categories = [
-    "Todos",
-    "Polos",
-    "Pantalones",
-    "Vestidos",
-    "Calzado",
-    "Accesorios",
-    "Deportivas",
-  ];
-
-  const discounts = [
-    {
-      id: 1,
-      store: "Urban Flow",
-      discount: "50% OFF",
-      description: "Ropa urbana seleccionada",
-      category: "Polos",
-      date: "Válido hasta el 30 de junio",
-      image: descuento1,
-    },
-    {
-      id: 2,
-      store: "Nova Fit",
-      discount: "35% OFF",
-      description: "Prendas deportivas para entrenamiento",
-      category: "Deportivas",
-      date: "Oferta por tiempo limitado",
-      image: descuento2,
-    },
-    {
-      id: 3,
-      store: "Luna Wear",
-      discount: "40% OFF",
-      description: "Outfits diarios y modernos",
-      category: "Vestidos",
-      date: "Válido hasta agotar stock",
-      image: descuento3,
-    },
-    {
-      id: 4,
-      store: "Maisoné",
-      discount: "25% OFF",
-      description: "Calzado elegante de temporada",
-      category: "Calzado",
-      date: "Solo esta semana",
-      image: descuento4,
-    },
-    {
-      id: 5,
-      store: "Norda",
-      discount: "2x1",
-      description: "Accesorios seleccionados",
-      category: "Accesorios",
-      date: "Promoción exclusiva online",
-      image: descuento5,
-    },
-    {
-      id: 6,
-      store: "Avanto",
-      discount: "30% OFF",
-      description: "Pantalones de nueva colección",
-      category: "Pantalones",
-      date: "Válido hasta el domingo",
-      image: descuento6,
-    },
-  ];
-
-  const filteredDiscounts =
-    activeCategory === "Todos"
-      ? discounts
-      : discounts.filter((item) => item.category === activeCategory);
+  const { discounts, coupons, loading, error } = useDiscounts(activeCategory);
 
   return (
     <main className="discounts-page">
@@ -119,7 +43,7 @@ function Discounts() {
           </div>
 
           <div className="discount-filter-buttons">
-            {categories.map((category) => (
+            {discountCategories.map((category) => (
               <button
                 key={category}
                 className={activeCategory === category ? "active" : ""}
@@ -132,8 +56,11 @@ function Discounts() {
         </section>
 
         <section className="discount-grid-section">
+          {loading && <p className="categories-empty-message">Cargando ofertas...</p>}
+          {error && <p className="categories-empty-message">{error}</p>}
+
           <div className="discount-grid">
-            {filteredDiscounts.map((item) => (
+            {discounts.map((item) => (
               <article className="discount-card" key={item.id}>
                 <div className="discount-image">
                   <img src={item.image} alt={item.store} />
@@ -158,9 +85,9 @@ function Discounts() {
                     <span>{item.category}</span>
                   </div>
 
-                  <a href="#" className="discount-card-button">
+                  <Link to="/tiendas" className="discount-card-button">
                     Ver tienda
-                  </a>
+                  </Link>
                 </div>
               </article>
             ))}
@@ -175,26 +102,19 @@ function Discounts() {
           </div>
 
           <div className="coupon-grid">
-            <article className="coupon-card">
-              <FaTicketAlt className="coupon-icon" />
-              <h3>VELMORA50</h3>
-              <p>Obtén 50% de descuento en tiendas seleccionadas.</p>
-              <button>Copiar cupón</button>
-            </article>
-
-            <article className="coupon-card">
-              <FaTicketAlt className="coupon-icon" />
-              <h3>NUEVATIENDA</h3>
-              <p>Primer mes gratuito para nuevas tiendas afiliadas.</p>
-              <button>Copiar cupón</button>
-            </article>
-
-            <article className="coupon-card">
-              <FaTicketAlt className="coupon-icon" />
-              <h3>MODA10</h3>
-              <p>Descuento adicional en ropa y accesorios destacados.</p>
-              <button>Copiar cupón</button>
-            </article>
+            {coupons.map((coupon) => (
+              <article className="coupon-card" key={coupon.id}>
+                <FaTicketAlt className="coupon-icon" />
+                <h3>{coupon.code}</h3>
+                <p>{coupon.title}</p>
+                <button
+                  type="button"
+                  onClick={() => navigator.clipboard?.writeText(coupon.code)}
+                >
+                  Copiar cupon
+                </button>
+              </article>
+            ))}
           </div>
         </section>
 

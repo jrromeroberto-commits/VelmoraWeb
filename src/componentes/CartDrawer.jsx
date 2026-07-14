@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { formatSoles, getCartSubtotal } from "../services/pricingService";
 
 function CartDrawer({
   cartItems,
@@ -7,10 +8,7 @@ function CartDrawer({
   onClearCart,
   onRemoveFromCart,
 }) {
-  const total = cartItems.reduce((sum, item) => {
-    const price = Number(item.price.replace("S/ ", ""));
-    return sum + price * item.quantity;
-  }, 0);
+  const total = getCartSubtotal(cartItems);
 
   return (
     <div className={`cart-overlay ${isOpen ? "active" : ""}`}>
@@ -60,7 +58,7 @@ function CartDrawer({
             <div className="cart-footer">
               <div>
                 <span>Total</span>
-                <strong>S/ {total.toFixed(2)}</strong>
+                <strong>{formatSoles(total)}</strong>
               </div>
 
               <button type="button" onClick={onClearCart}>

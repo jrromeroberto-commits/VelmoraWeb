@@ -67,6 +67,8 @@ function Categories({ onAddToCart }) {
       price: "S/ 149.90",
       tag: "Nuevo",
       category: "Moda elegante",
+      storeId: "avanto",
+      storeName: "Avanto",
       image: producto1,
     },
     {
@@ -75,6 +77,8 @@ function Categories({ onAddToCart }) {
       price: "S/ 119.90",
       tag: "Top",
       category: "Moda elegante",
+      storeId: "avanto",
+      storeName: "Avanto",
       image: producto2,
     },
     {
@@ -83,6 +87,8 @@ function Categories({ onAddToCart }) {
       price: "S/ 169.90",
       tag: "Trend",
       category: "Accesorios",
+      storeId: "norda",
+      storeName: "Norda",
       image: producto3,
     },
     {
@@ -91,6 +97,8 @@ function Categories({ onAddToCart }) {
       price: "S/ 209.90",
       tag: "Sale",
       category: "Ropa urbana",
+      storeId: "urban-flow",
+      storeName: "Urban Flow",
       image: producto4,
     },
   ];
