@@ -13,6 +13,7 @@ import logoVelmora from "../imagenes/Logo_velmora_t.png";
 import slide1 from "../imagenes/login_slide1.png";
 import slide2 from "../imagenes/login_slide2.png";
 import slide3 from "../imagenes/login_slide3.png";
+import { isBlank, isValidEmail } from "../utils/formValidation";
 
 function Login({ onLogin }) {
   const navigate = useNavigate();
@@ -59,6 +60,21 @@ function Login({ onLogin }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormMessage("");
+
+    if (isBlank(formData.email)) {
+      setFormMessage("Ingresa tu correo.");
+      return;
+    }
+
+    if (!isValidEmail(formData.email)) {
+      setFormMessage("Ingresa un correo valido.");
+      return;
+    }
+
+    if (isBlank(formData.password)) {
+      setFormMessage("Ingresa tu contrasena.");
+      return;
+    }
 
     setIsSubmitting(true);
     const result = await onLogin({
@@ -120,7 +136,7 @@ function Login({ onLogin }) {
             <p>Inicia sesion para continuar descubriendo lo mejor de la moda.</p>
           </div>
 
-          <form className="login-form-new" onSubmit={handleSubmit}>
+          <form className="login-form-new" onSubmit={handleSubmit} noValidate>
             <label>
               Correo
               <div className="login-input-box">
@@ -131,7 +147,6 @@ function Login({ onLogin }) {
                   placeholder="tu@email.com"
                   value={formData.email}
                   onChange={handleInputChange}
-                  required
                 />
               </div>
             </label>
@@ -146,7 +161,6 @@ function Login({ onLogin }) {
                   placeholder="**********"
                   value={formData.password}
                   onChange={handleInputChange}
-                  required
                 />
                 <button
                   type="button"

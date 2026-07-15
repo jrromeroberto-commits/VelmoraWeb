@@ -13,6 +13,7 @@ import {
 
 import registerVisual from "../imagenes/login_slide1.png";
 import logoVelmora from "../imagenes/Logo_velmora_t.png";
+import { isBlank, isValidEmail } from "../utils/formValidation";
 
 function Register({ onRegister }) {
   const navigate = useNavigate();
@@ -37,6 +38,31 @@ function Register({ onRegister }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormMessage("");
+
+    if (isBlank(formData.name)) {
+      setFormMessage("Ingresa tu nombre.");
+      return;
+    }
+
+    if (isBlank(formData.email)) {
+      setFormMessage("Ingresa tu correo.");
+      return;
+    }
+
+    if (!isValidEmail(formData.email)) {
+      setFormMessage("Ingresa un correo valido.");
+      return;
+    }
+
+    if (isBlank(formData.password)) {
+      setFormMessage("Ingresa una contrasena.");
+      return;
+    }
+
+    if (isBlank(formData.confirmPassword)) {
+      setFormMessage("Confirma tu contrasena.");
+      return;
+    }
 
     if (formData.password !== formData.confirmPassword) {
       setFormMessage("Las contrasenas no coinciden.");
@@ -77,7 +103,7 @@ function Register({ onRegister }) {
             </p>
           </div>
 
-          <form className="register-form-new" onSubmit={handleSubmit}>
+          <form className="register-form-new" onSubmit={handleSubmit} noValidate>
             <label>
               Nombre
               <div className="register-input-box">
@@ -88,7 +114,6 @@ function Register({ onRegister }) {
                   placeholder="Tu nombre completo"
                   value={formData.name}
                   onChange={handleInputChange}
-                  required
                 />
               </div>
             </label>
@@ -103,7 +128,6 @@ function Register({ onRegister }) {
                   placeholder="tu@email.com"
                   value={formData.email}
                   onChange={handleInputChange}
-                  required
                 />
               </div>
             </label>
@@ -118,7 +142,6 @@ function Register({ onRegister }) {
                   placeholder="**********"
                   value={formData.password}
                   onChange={handleInputChange}
-                  required
                 />
                 <button
                   type="button"
@@ -140,7 +163,6 @@ function Register({ onRegister }) {
                   placeholder="**********"
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  required
                 />
                 <button
                   type="button"

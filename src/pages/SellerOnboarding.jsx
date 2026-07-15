@@ -9,6 +9,8 @@ import {
   FaTag,
 } from "react-icons/fa";
 
+import { isBlank } from "../utils/formValidation";
+
 const createEmptyProduct = () => ({
   id: Date.now() + Math.random(),
   name: "",
@@ -82,6 +84,31 @@ function SellerOnboarding({ onStoreCreated }) {
     event.preventDefault();
     setFormMessage("");
 
+    if (isBlank(storeData.storeName)) {
+      setFormMessage("Ingresa el nombre de la tienda.");
+      return;
+    }
+
+    if (isBlank(storeData.description)) {
+      setFormMessage("Ingresa una descripcion para la tienda.");
+      return;
+    }
+
+    if (isBlank(storeData.category)) {
+      setFormMessage("Selecciona una categoria principal.");
+      return;
+    }
+
+    if (storeType === "externa" && isBlank(storeData.website)) {
+      setFormMessage("Ingresa el enlace de tu tienda externa.");
+      return;
+    }
+
+    if (isBlank(storeData.phone)) {
+      setFormMessage("Ingresa un numero de contacto.");
+      return;
+    }
+
     const completedProducts = products
       .filter((product) => product.name.trim())
       .map((product) => ({
@@ -125,7 +152,7 @@ function SellerOnboarding({ onStoreCreated }) {
         </span>
       </section>
 
-      <form className="seller-onboarding-layout" onSubmit={handleSubmit}>
+      <form className="seller-onboarding-layout" onSubmit={handleSubmit} noValidate>
         <section className="seller-form-panel">
           <div className="seller-panel-title">
             <FaStore />
@@ -163,7 +190,6 @@ function SellerOnboarding({ onStoreCreated }) {
               value={storeData.storeName}
               onChange={handleStoreChange}
               placeholder="Nombre comercial de tu tienda"
-              required
             />
           </label>
 
@@ -174,7 +200,6 @@ function SellerOnboarding({ onStoreCreated }) {
               value={storeData.description}
               onChange={handleStoreChange}
               placeholder="Describe el estilo, productos y propuesta de tu tienda"
-              required
             />
           </label>
 
@@ -184,7 +209,6 @@ function SellerOnboarding({ onStoreCreated }) {
               name="category"
               value={storeData.category}
               onChange={handleStoreChange}
-              required
             >
               <option value="">Selecciona una categoria</option>
               <option>Ropa urbana</option>
@@ -222,7 +246,6 @@ function SellerOnboarding({ onStoreCreated }) {
                   value={storeData.website}
                   onChange={handleStoreChange}
                   placeholder="https://mitienda.com"
-                  required={storeType === "externa"}
                 />
               </div>
             </label>
@@ -248,7 +271,6 @@ function SellerOnboarding({ onStoreCreated }) {
               value={storeData.phone}
               onChange={handleStoreChange}
               placeholder="+51 999 999 999"
-              required
             />
           </label>
         </section>

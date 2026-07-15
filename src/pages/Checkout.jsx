@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
+import { isBlank, isValidEmail } from "../utils/formValidation";
+
 function getPriceNumber(price) {
   if (typeof price === "number") return price;
   return Number(String(price || "0").replace("S/ ", "")) || 0;
@@ -11,15 +13,46 @@ function Checkout({ cartItems, onClearCart, onCreateOrder }) {
   const [orderSent, setOrderSent] = useState(false);
   const [formMessage, setFormMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [customerData, setCustomerData] = useState({
+    name: "",
+    email: "",
+    address: "",
+  });
 
   const total = cartItems.reduce((sum, item) => {
     const price = getPriceNumber(item.price);
     return sum + price * item.quantity;
   }, 0);
 
+  const handleCustomerChange = (event) => {
+    const { name, value } = event.target;
+    setCustomerData((data) => ({ ...data, [name]: value }));
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setFormMessage("");
+
+    if (isBlank(customerData.name)) {
+      setFormMessage("Ingresa tu nombre completo.");
+      return;
+    }
+
+    if (isBlank(customerData.email)) {
+      setFormMessage("Ingresa tu correo electronico.");
+      return;
+    }
+
+    if (!isValidEmail(customerData.email)) {
+      setFormMessage("Ingresa un correo valido.");
+      return;
+    }
+
+    if (isBlank(customerData.address)) {
+      setFormMessage("Ingresa la direccion de entrega.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     const result = await onCreateOrder();
@@ -55,9 +88,7 @@ function Checkout({ cartItems, onClearCart, onCreateOrder }) {
       <section className="checkout-heading">
         <p>Finalizar compra</p>
         <h1>Checkout</h1>
-        <span>
-          Revisa tu pedido y selecciona un metodo de pago.
-        </span>
+        <span>Revisa tu pedido y selecciona un metodo de pago.</span>
       </section>
 
       {cartItems.length === 0 ? (
@@ -91,22 +122,40 @@ function Checkout({ cartItems, onClearCart, onCreateOrder }) {
             </div>
           </div>
 
-          <form className="checkout-form" onSubmit={handleSubmit}>
+          <form className="checkout-form" onSubmit={handleSubmit} noValidate>
             <h2>Datos de compra</h2>
 
             <label>
               Nombre completo
-              <input type="text" placeholder="Cliente Velmora" required />
+              <input
+                type="text"
+                name="name"
+                placeholder="Cliente Velmora"
+                value={customerData.name}
+                onChange={handleCustomerChange}
+              />
             </label>
 
             <label>
               Correo electronico
-              <input type="email" placeholder="cliente@gmail.com" required />
+              <input
+                type="email"
+                name="email"
+                placeholder="cliente@gmail.com"
+                value={customerData.email}
+                onChange={handleCustomerChange}
+              />
             </label>
 
             <label>
               Direccion de entrega
-              <input type="text" placeholder="Av. Manuel Olguín 125" required />
+              <input
+                type="text"
+                name="address"
+                placeholder="Av. Manuel Olguin 125"
+                value={customerData.address}
+                onChange={handleCustomerChange}
+              />
             </label>
 
             <div className="checkout-methods">
@@ -124,10 +173,11 @@ function Checkout({ cartItems, onClearCart, onCreateOrder }) {
               ))}
             </div>
 
-
-
-
-            <button type="submit" className="checkout-submit">
+            <button
+              type="submit"
+              className="checkout-submit"
+              disabled={isSubmitting}
+            >
               {isSubmitting
                 ? "Confirmando pedido..."
                 : `Confirmar pedido con ${paymentMethod}`}
