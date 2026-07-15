@@ -27,26 +27,30 @@ function Register({ onRegister }) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [formMessage, setFormMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData((data) => ({ ...data, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormMessage("");
 
     if (formData.password !== formData.confirmPassword) {
       setFormMessage("Las contrasenas no coinciden.");
       return;
     }
 
-    const result = onRegister({
-      name: formData.name.trim(),
-      email: formData.email.trim(),
-      password: formData.password,
-      role: userType,
-    });
+    setIsSubmitting(true);
+    const result = await onRegister({
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        password: formData.password,
+        role: userType,
+      });
+    setIsSubmitting(false);
 
     if (!result.success) {
       setFormMessage(result.message);
@@ -166,8 +170,8 @@ function Register({ onRegister }) {
               </button>
             </div>
 
-            <button type="submit" className="register-submit">
-              Registrarme
+            <button type="submit" className="register-submit" disabled={isSubmitting}>
+              {isSubmitting ? "Registrando..." : "Registrarme"}
             </button>
 
             {formMessage && <p className="auth-message error">{formMessage}</p>}

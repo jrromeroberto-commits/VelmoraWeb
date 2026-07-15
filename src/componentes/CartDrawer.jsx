@@ -7,8 +7,13 @@ function CartDrawer({
   onClearCart,
   onRemoveFromCart,
 }) {
+  const getPriceNumber = (price) => {
+    if (typeof price === "number") return price;
+    return Number(String(price || "0").replace("S/ ", "")) || 0;
+  };
+
   const total = cartItems.reduce((sum, item) => {
-    const price = Number(item.price.replace("S/ ", ""));
+    const price = getPriceNumber(item.price);
     return sum + price * item.quantity;
   }, 0);
 

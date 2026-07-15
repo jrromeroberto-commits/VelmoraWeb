@@ -3,36 +3,32 @@ import { useState } from "react";
 
 import vendeImage from "../imagenes/Vende.jpeg";
 import logoVelmora from "../imagenes/Logo_velmora_t.png";
-import { baseStores } from "../data/storesData";
 
 function Stores({ sellerStores = [] }) {
   const [activeCategory, setActiveCategory] = useState("Todas");
 
-  const registeredStores = sellerStores.map((sellerStore, index) => ({
-        id: sellerStore.id || `registered-store-${index}`,
-        name: sellerStore.storeName || "Tienda Velmora",
-        category: sellerStore.category || "Tienda registrada",
-        description:
-          sellerStore.description ||
-          "Tienda creada dentro de Velmora con catalogo propio.",
-        logo: sellerStore.logoPreview || logoVelmora,
-        image: vendeImage,
-        type:
-          sellerStore.storeType === "externa"
-            ? "Web externa"
-            : "Tienda Velmora",
-        products: sellerStore.products?.length || 0,
-        link: sellerStore.website || `/tiendas/${sellerStore.id || `registered-store-${index}`}`,
-        external: sellerStore.storeType === "externa" && sellerStore.website,
-        featured: true,
-      }));
-
-  const stores = baseStores.map((store) => ({
-    ...store,
-    products: store.products.length,
+  const allStores = sellerStores.map((sellerStore) => ({
+    id: sellerStore.id,
+    name: sellerStore.name || sellerStore.storeName || "Tienda Velmora",
+    category: sellerStore.category || "Tienda registrada",
+    description:
+      sellerStore.description ||
+      "Tienda creada dentro de Velmora con catalogo propio.",
+    logo: sellerStore.logoUrl || sellerStore.logoPreview || logoVelmora,
+    image: sellerStore.bannerUrl || vendeImage,
+    type:
+      sellerStore.storeType === "externa"
+        ? "Web externa"
+        : "Tienda Velmora",
+    products:
+      sellerStore.productCount ||
+      sellerStore._count?.products ||
+      sellerStore.products?.length ||
+      0,
+    link: sellerStore.website || `/tiendas/${sellerStore.id}`,
+    external: sellerStore.storeType === "externa" && sellerStore.website,
+    featured: true,
   }));
-
-  const allStores = [...registeredStores, ...stores];
   const categories = ["Todas", ...new Set(allStores.map((store) => store.category))];
   const visibleStores =
     activeCategory === "Todas"
@@ -71,8 +67,14 @@ function Stores({ sellerStores = [] }) {
       </section>
 
       <section className="stores-grid-section">
-        <div className="stores-grid">
-          {visibleStores.map((store) => (
+        {visibleStores.length === 0 ? (
+          <div className="catalog-empty">
+            <h1>No hay tiendas registradas</h1>
+            <p>Cuando un vendedor cree su tienda, aparecera aqui automaticamente.</p>
+          </div>
+        ) : (
+          <div className="stores-grid">
+            {visibleStores.map((store) => (
             <article className="store-list-card" key={store.id}>
               <div className="store-list-cover">
                 <img src={store.image} alt={store.name} />
@@ -104,8 +106,9 @@ function Stores({ sellerStores = [] }) {
                 )}
               </div>
             </article>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
     </main>
   );

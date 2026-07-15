@@ -1,17 +1,35 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-function Checkout({ cartItems, onClearCart }) {
+function getPriceNumber(price) {
+  if (typeof price === "number") return price;
+  return Number(String(price || "0").replace("S/ ", "")) || 0;
+}
+
+function Checkout({ cartItems, onClearCart, onCreateOrder }) {
   const [paymentMethod, setPaymentMethod] = useState("Tarjeta");
   const [orderSent, setOrderSent] = useState(false);
+  const [formMessage, setFormMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const total = cartItems.reduce((sum, item) => {
-    const price = Number(item.price.replace("S/ ", ""));
+    const price = getPriceNumber(item.price);
     return sum + price * item.quantity;
   }, 0);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setFormMessage("");
+    setIsSubmitting(true);
+
+    const result = await onCreateOrder();
+    setIsSubmitting(false);
+
+    if (!result.success) {
+      setFormMessage(result.message);
+      return;
+    }
+
     setOrderSent(true);
     onClearCart();
   };
@@ -110,8 +128,11 @@ function Checkout({ cartItems, onClearCart }) {
 
 
             <button type="submit" className="checkout-submit">
-              Confirmar pedido con {paymentMethod}
+              {isSubmitting
+                ? "Confirmando pedido..."
+                : `Confirmar pedido con ${paymentMethod}`}
             </button>
+            {formMessage && <p className="auth-message error">{formMessage}</p>}
           </form>
         </section>
       )}

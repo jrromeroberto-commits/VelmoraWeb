@@ -26,6 +26,8 @@ function SellerOnboarding({ onStoreCreated }) {
   const [storeType, setStoreType] = useState("interna");
   const [products, setProducts] = useState([createEmptyProduct()]);
   const [logoPreview, setLogoPreview] = useState("");
+  const [formMessage, setFormMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [storeData, setStoreData] = useState({
     storeName: "",
     description: "",
@@ -76,8 +78,9 @@ function SellerOnboarding({ onStoreCreated }) {
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setFormMessage("");
 
     const completedProducts = products
       .filter((product) => product.name.trim())
@@ -94,12 +97,20 @@ function SellerOnboarding({ onStoreCreated }) {
           : ["Disponible"],
       }));
 
-    onStoreCreated({
+    setIsSubmitting(true);
+    const result = await onStoreCreated({
       ...storeData,
       logoPreview,
       storeType,
       products: completedProducts,
     });
+    setIsSubmitting(false);
+
+    if (!result.success) {
+      setFormMessage(result.message);
+      return;
+    }
+
     navigate("/panel");
   };
 
@@ -109,8 +120,8 @@ function SellerOnboarding({ onStoreCreated }) {
         <p>Registro de tienda</p>
         <h1>Configura tu espacio en Velmora</h1>
         <span>
-          Completa la informacion comercial de tu tienda. Por ahora esta vista
-          es solo frontend y usa datos simulados.
+          Completa la informacion comercial de tu tienda. Los datos se guardaran
+          en el backend de Velmora.
         </span>
       </section>
 
@@ -335,8 +346,11 @@ function SellerOnboarding({ onStoreCreated }) {
           </button>
 
           <div className="seller-onboarding-actions">
-            <button type="submit">Finalizar registro de tienda</button>
+            <button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Guardando tienda..." : "Finalizar registro de tienda"}
+            </button>
           </div>
+          {formMessage && <p className="auth-message error">{formMessage}</p>}
         </section>
       </form>
     </main>

@@ -41,6 +41,7 @@ function Login({ onLogin }) {
     password: "",
   });
   const [formMessage, setFormMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -55,13 +56,16 @@ function Login({ onLogin }) {
     setFormData((data) => ({ ...data, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormMessage("");
 
-    const result = onLogin({
+    setIsSubmitting(true);
+    const result = await onLogin({
       email: formData.email.trim(),
       password: formData.password,
     });
+    setIsSubmitting(false);
 
     if (!result.success) {
       setFormMessage(result.message);
@@ -164,8 +168,8 @@ function Login({ onLogin }) {
               <a href="#">Olvidaste tu contrasena?</a>
             </div>
 
-            <button type="submit" className="login-submit">
-              Iniciar sesion
+            <button type="submit" className="login-submit" disabled={isSubmitting}>
+              {isSubmitting ? "Ingresando..." : "Iniciar sesion"}
             </button>
 
             {formMessage && <p className="auth-message error">{formMessage}</p>}

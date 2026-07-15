@@ -27,31 +27,32 @@ function SellerDashboard({ store }) {
         stock: "32",
       },
     ];
+  const dashboardStats = store?.stats || {};
 
   const stats = [
     {
       icon: <FaMousePointer />,
       label: "Clicks a tienda",
-      value: "12,450",
-      change: "+15.8%",
+      value: dashboardStats.catalogClicks || 0,
+      change: "desde backend",
     },
     {
       icon: <FaShoppingBag />,
       label: "Ventas estimadas",
-      value: "S/ 3,639",
-      change: "+8.4%",
+      value: `S/ ${Number(dashboardStats.revenue || 0).toFixed(2)}`,
+      change: `${dashboardStats.orders || 0} ordenes`,
     },
     {
       icon: <FaBoxOpen />,
       label: "Productos activos",
-      value: products.length,
-      change: "+2",
+      value: dashboardStats.products || products.length,
+      change: `${dashboardStats.totalStock || 0} en stock`,
     },
     {
       icon: <FaChartLine />,
-      label: "Conversion",
-      value: "6.8%",
-      change: "+1.2%",
+      label: "Vistas",
+      value: dashboardStats.views || 0,
+      change: `${dashboardStats.lowStock || 0} bajo stock`,
     },
   ];
 
@@ -108,14 +109,14 @@ function SellerDashboard({ store }) {
         <div className="seller-dashboard-grid">
           <section className="seller-analytics-card">
             <div className="seller-card-heading">
-              <h2>Resumen de visitas</h2>
+            <h2>Resumen de ventas</h2>
               <button type="button">Filtrar</button>
             </div>
 
             <div className="seller-bars">
               {visits.map((item) => (
                 <div className="seller-bar-group" key={item.month}>
-                  <strong>S/ {(item.value * 52).toLocaleString("es-PE")}</strong>
+                  <strong>S/ {(item.value * Math.max(Number(dashboardStats.revenue || 1), 1)).toLocaleString("es-PE")}</strong>
                   <div>
                     <span style={{ height: `${item.value}%` }}></span>
                     <span style={{ height: `${item.value - 12}%` }}></span>
@@ -129,7 +130,7 @@ function SellerDashboard({ store }) {
 
           <section className="seller-analytics-card seller-clicks-card">
             <div className="seller-card-heading">
-              <h2>Clicks por dia</h2>
+              <h2>Actividad por dia</h2>
               <button type="button">Semanal</button>
             </div>
 
@@ -165,7 +166,7 @@ function SellerDashboard({ store }) {
               <div className="seller-table-row" key={product.id}>
                 <span>{product.name}</span>
                 <span>{product.category}</span>
-                <span>S/ {product.price}</span>
+                <span>S/ {Number(product.price || 0).toFixed(2)}</span>
                 <span>{product.stock}</span>
                 <span>Activo</span>
               </div>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import Header from "./componentes/Header";
 import PromoBar from "./componentes/PromoBar";
@@ -20,6 +20,14 @@ import AllEvents from "./pages/AllEvents";
 import Checkout from "./pages/Checkout";
 import Stores from "./pages/Stores";
 import StoreCatalog from "./pages/StoreCatalog";
+import {
+  authApi,
+  getAuthToken,
+  ordersApi,
+  saveAuthToken,
+  sellerApi,
+  storesApi,
+} from "./services/api";
 
 function Home() {
   return (
@@ -31,38 +39,90 @@ function Home() {
   );
 }
 
-const getSavedUsers = () => JSON.parse(localStorage.getItem("velmoraUsers")) || [];
+const normalizeUser = (user, setupComplete = true) => ({
+  id: user.id,
+  name: user.name,
+  email: user.email,
+  role: user.role === "SELLER" ? "vendedor" : "comprador",
+  backendRole: user.role,
+  setupComplete: user.role === "SELLER" ? setupComplete : true,
+});
 
-const getSessionUser = (user) => {
-  const sessionUser = { ...user };
-  delete sessionUser.password;
-  return sessionUser;
+const priceToNumber = (price) => {
+  if (typeof price === "number") return price;
+  return Number(String(price || "0").replace("S/", "").trim()) || 0;
+};
+
+const mapDashboardStore = (dashboardData) => ({
+  id: dashboardData.store.id,
+  storeName: dashboardData.store.name,
+  description: dashboardData.store.description,
+  category: dashboardData.store.category,
+  storeType: dashboardData.store.storeType,
+  logoPreview: dashboardData.store.logoUrl,
+  products: dashboardData.recentProducts || dashboardData.store.products || [],
+  stats: dashboardData.stats,
+});
+
+const mapStoreForState = (store) => ({
+  id: store.id,
+  storeName: store.name,
+  description: store.description,
+  category: store.category,
+  storeType: store.storeType,
+  logoPreview: store.logoUrl,
+  website: store.website,
+  instagram: store.instagram,
+  phone: store.phone,
+  products: store.products || [],
+  stats: store.stats,
+});
+
+const normalizeStorePayload = (storeData) => ({
+  name: storeData.storeName,
+  description: storeData.description,
+  category: storeData.category,
+  storeType: storeData.storeType,
+  logoUrl: storeData.logoPreview,
+  website: storeData.website,
+  instagram: storeData.instagram,
+  phone: storeData.phone,
+});
+
+const normalizeProductPayload = (product) => ({
+  name: product.name,
+  category: product.category,
+  price: priceToNumber(product.price),
+  stock: Number(product.stock) || 0,
+  description: product.description,
+  imageUrl: product.imagePreview,
+  sizes: Array.isArray(product.sizes) ? product.sizes : [],
+  colors: Array.isArray(product.colors) ? product.colors : [],
+});
+
+const toApiRole = (role) => (role === "vendedor" ? "SELLER" : "BUYER");
+
+const getMessage = (error) => error?.message || "No se pudo conectar con el servidor.";
+
+const isSellerNotReadyError = (error) =>
+  String(error?.message || "").toLowerCase().includes("aun no tiene una tienda");
+
+const savedJson = (key) => {
+  try {
+    const value = localStorage.getItem(key);
+    return value ? JSON.parse(value) : null;
+  } catch {
+    return null;
+  }
 };
 
 function App() {
   const [cartOpen, setCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
-
-  const [currentUser, setCurrentUser] = useState(() => {
-    const savedUser = localStorage.getItem("velmoraUser");
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
-
-  const [sellerStore, setSellerStore] = useState(() => {
-    const savedStore = localStorage.getItem("velmoraStore");
-    return savedStore ? JSON.parse(savedStore) : null;
-  });
-
-  const [sellerStores, setSellerStores] = useState(() => {
-    const savedStores = localStorage.getItem("velmoraStores");
-
-    if (savedStores) {
-      return JSON.parse(savedStores);
-    }
-
-    const savedStore = localStorage.getItem("velmoraStore");
-    return savedStore ? [JSON.parse(savedStore)] : [];
-  });
+  const [authToken, setAuthToken] = useState(() => getAuthToken());
+  const [currentUser, setCurrentUser] = useState(() => savedJson("velmoraUser"));
+  const [sellerStore, setSellerStore] = useState(null);
+  const [sellerStores, setSellerStores] = useState([]);
 
   useEffect(() => {
     if (currentUser) {
@@ -73,98 +133,152 @@ function App() {
   }, [currentUser]);
 
   useEffect(() => {
-    if (sellerStore) {
-      localStorage.setItem("velmoraStore", JSON.stringify(sellerStore));
-    } else {
-      localStorage.removeItem("velmoraStore");
+    saveAuthToken(authToken);
+  }, [authToken]);
+
+  const loadStores = useCallback(async () => {
+    try {
+      const data = await storesApi.list();
+      setSellerStores(data.stores || []);
+    } catch (error) {
+      console.error("No se pudieron cargar tiendas:", error);
     }
-  }, [sellerStore]);
+  }, []);
+
+  const loadSellerDashboard = useCallback(async (token = authToken) => {
+    if (!token) return;
+
+    try {
+      const dashboard = await sellerApi.dashboard(token);
+      setSellerStore(mapDashboardStore(dashboard));
+      setCurrentUser((user) =>
+        user ? { ...user, setupComplete: true } : user
+      );
+    } catch (error) {
+      if (isSellerNotReadyError(error)) {
+        setSellerStore(null);
+        setCurrentUser((user) =>
+          user?.role === "vendedor" ? { ...user, setupComplete: false } : user
+        );
+        return;
+      }
+
+      console.error("No se pudo cargar dashboard:", error);
+    }
+  }, [authToken]);
 
   useEffect(() => {
-    localStorage.setItem("velmoraStores", JSON.stringify(sellerStores));
-  }, [sellerStores]);
+    const timer = setTimeout(() => {
+      loadStores();
+    }, 0);
 
-  const handleRegister = (userData) => {
-    const savedUsers = getSavedUsers();
-    const emailExists = savedUsers.some(
-      (user) => user.email.toLowerCase() === userData.email.toLowerCase()
-    );
+    return () => clearTimeout(timer);
+  }, [loadStores]);
 
-    if (emailExists) {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (currentUser?.role === "vendedor" && authToken) {
+        loadSellerDashboard(authToken);
+      } else {
+        setSellerStore(null);
+      }
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [authToken, currentUser?.role, loadSellerDashboard]);
+
+  const handleRegister = async (userData) => {
+    try {
+      const result = await authApi.register({
+        name: userData.name,
+        email: userData.email,
+        password: userData.password,
+        role: toApiRole(userData.role),
+      });
+      const user = normalizeUser(result.user, result.user.role !== "SELLER");
+
+      setAuthToken(result.token);
+      setCurrentUser(user);
+
+      return { success: true, user };
+    } catch (error) {
       return {
         success: false,
-        message: "Ya existe una cuenta registrada con ese correo.",
+        message: getMessage(error),
+      };
+    }
+  };
+
+  const handleLogin = async ({ email, password }) => {
+    try {
+      const result = await authApi.login({ email, password });
+      const user = normalizeUser(result.user);
+
+      setAuthToken(result.token);
+      setCurrentUser(user);
+
+      if (user.role === "vendedor") {
+        await loadSellerDashboard(result.token);
+      }
+
+      return { success: true, user };
+    } catch (error) {
+      return {
+        success: false,
+        message: getMessage(error),
+      };
+    }
+  };
+
+  const handleStoreCreated = async (storeData) => {
+    if (!authToken) {
+      return {
+        success: false,
+        message: "Debes iniciar sesion como vendedor.",
       };
     }
 
-    const newUser = {
-      id: Date.now(),
-      name: userData.name,
-      email: userData.email,
-      password: userData.password,
-      role: userData.role,
-      setupComplete: userData.role === "comprador",
-    };
+    try {
+      const created = await storesApi.create(normalizeStorePayload(storeData), authToken);
 
-    localStorage.setItem("velmoraUsers", JSON.stringify([...savedUsers, newUser]));
-    setCurrentUser(getSessionUser(newUser));
+      for (const product of storeData.products || []) {
+        await storesApi.createProduct(
+          created.store.id,
+          normalizeProductPayload(product),
+          authToken
+        );
+      }
 
-    return { success: true };
-  };
+      const fullStore = await storesApi.get(created.store.id);
+      const stateStore = mapStoreForState(fullStore.store);
 
-  const handleLogin = ({ email, password }) => {
-    const savedUsers = getSavedUsers();
-    const foundUser = savedUsers.find(
-      (user) =>
-        user.email.toLowerCase() === email.toLowerCase() &&
-        user.password === password
-    );
-
-    if (!foundUser) {
-      return {
-        success: false,
-        message: "Correo o contrasena incorrectos.",
-      };
-    }
-
-    setCurrentUser(getSessionUser(foundUser));
-    return { success: true, user: foundUser };
-  };
-
-  const handleStoreCreated = (storeData) => {
-    const newStore = {
-      ...storeData,
-      id: Date.now(),
-      createdAt: new Date().toISOString(),
-    };
-
-    setSellerStore(newStore);
-    setSellerStores((stores) => [newStore, ...stores]);
-    setCurrentUser((user) => ({
-      ...user,
-      name: newStore.storeName || "Tienda Velmora",
-      role: "vendedor",
-      setupComplete: true,
-    }));
-
-    if (currentUser?.email) {
-      const savedUsers = getSavedUsers();
-      const updatedUsers = savedUsers.map((user) =>
-        user.email === currentUser.email
+      setSellerStore(stateStore);
+      setCurrentUser((user) =>
+        user
           ? {
               ...user,
-              name: newStore.storeName || user.name,
+              name: created.store.name || user.name,
+              role: "vendedor",
               setupComplete: true,
             }
           : user
       );
+      await loadStores();
+      await loadSellerDashboard(authToken);
 
-      localStorage.setItem("velmoraUsers", JSON.stringify(updatedUsers));
+      return { success: true, store: stateStore };
+    } catch (error) {
+      return {
+        success: false,
+        message: getMessage(error),
+      };
     }
   };
 
   const handleLogout = () => {
+    setAuthToken(null);
     setCurrentUser(null);
+    setSellerStore(null);
   };
 
   const handleAddToCart = (product) => {
@@ -198,6 +312,35 @@ function App() {
 
   const handleClearCart = () => {
     setCartItems([]);
+  };
+
+  const handleCheckout = async () => {
+    if (!authToken) {
+      return {
+        success: false,
+        message: "Debes iniciar sesion para confirmar la compra.",
+      };
+    }
+
+    try {
+      await ordersApi.create(
+        {
+          items: cartItems.map((item) => ({
+            productId: item.id,
+            quantity: item.quantity,
+            selectedSize: item.selectedSize,
+            selectedColor: item.selectedColor,
+          })),
+        },
+        authToken
+      );
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        message: getMessage(error),
+      };
+    }
   };
 
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
@@ -242,7 +385,11 @@ function App() {
         <Route
           path="/checkout"
           element={
-            <Checkout cartItems={cartItems} onClearCart={handleClearCart} />
+            <Checkout
+              cartItems={cartItems}
+              onClearCart={handleClearCart}
+              onCreateOrder={handleCheckout}
+            />
           }
         />
         <Route

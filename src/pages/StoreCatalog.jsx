@@ -1,50 +1,76 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { FaShoppingBag, FaStore } from "react-icons/fa";
 
-import { baseStores } from "../data/storesData";
+import { storesApi } from "../services/api";
 import vendeImage from "../imagenes/Vende.jpeg";
 import logoVelmora from "../imagenes/Logo_velmora_t.png";
 
-function normalizeRegisteredStore(sellerStore, index) {
-  const id = String(sellerStore.id || `registered-store-${index}`);
+function formatPrice(price) {
+  return `S/ ${Number(price || 0).toFixed(2)}`;
+}
 
+function normalizeStore(store) {
   return {
-    id,
-    name: sellerStore.storeName || "Tienda Velmora",
-    category: sellerStore.category || "Tienda registrada",
+    id: store.id,
+    name: store.name || "Tienda Velmora",
+    category: store.category || "Tienda registrada",
     description:
-      sellerStore.description ||
+      store.description ||
       "Tienda creada dentro de Velmora con catalogo propio.",
-    logo: sellerStore.logoPreview || logoVelmora,
-    image: vendeImage,
-    products: (sellerStore.products || []).map((product, productIndex) => ({
-      id: `${id}-product-${product.id || productIndex}`,
+    logo: store.logoUrl || logoVelmora,
+    image: store.bannerUrl || vendeImage,
+    products: (store.products || []).map((product) => ({
+      id: product.id,
       name: product.name || "Prenda sin nombre",
       category: product.category || "Catalogo",
-      price: product.price || "S/ 0.00",
-      stock: product.stock || "0",
-      image: product.imagePreview || vendeImage,
+      price: formatPrice(product.price),
+      stock: product.stock || 0,
+      image: product.imageUrl || vendeImage,
       description: product.description || "Producto registrado por la tienda.",
-      sizes: Array.isArray(product.sizes) ? product.sizes : ["Unica"],
-      colors: Array.isArray(product.colors) ? product.colors : ["Disponible"],
+      sizes: Array.isArray(product.sizes) && product.sizes.length > 0 ? product.sizes : ["Unica"],
+      colors:
+        Array.isArray(product.colors) && product.colors.length > 0
+          ? product.colors
+          : ["Disponible"],
     })),
   };
 }
 
-function StoreCatalog({ sellerStores = [], onAddToCart }) {
+function StoreCatalog({ onAddToCart }) {
   const { storeId } = useParams();
   const [selectedOptions, setSelectedOptions] = useState({});
+  const [store, setStore] = useState(null);
+  const [status, setStatus] = useState("loading");
 
-  const stores = useMemo(
-    () => [
-      ...sellerStores.map((store, index) => normalizeRegisteredStore(store, index)),
-      ...baseStores,
-    ],
-    [sellerStores]
-  );
+  useEffect(() => {
+    let isMounted = true;
 
-  const store = stores.find((item) => String(item.id) === String(storeId));
+    async function loadStore() {
+      try {
+        setStatus("loading");
+        const data = await storesApi.get(storeId);
+
+        if (!isMounted) return;
+
+        setStore(normalizeStore(data.store));
+        setStatus("ready");
+        storesApi.metric(storeId, "STORE_VIEW").catch(() => {});
+      } catch (error) {
+        console.error("No se pudo cargar la tienda:", error);
+
+        if (isMounted) {
+          setStatus("error");
+        }
+      }
+    }
+
+    loadStore();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [storeId]);
 
   const handleOptionChange = (productId, field, value) => {
     setSelectedOptions((options) => ({
@@ -70,7 +96,19 @@ function StoreCatalog({ sellerStores = [], onAddToCart }) {
     });
   };
 
-  if (!store) {
+  if (status === "loading") {
+    return (
+      <main className="catalog-page">
+        <section className="catalog-empty">
+          <FaStore />
+          <h1>Cargando tienda</h1>
+          <p>Estamos consultando el catalogo desde el backend.</p>
+        </section>
+      </main>
+    );
+  }
+
+  if (status === "error" || !store) {
     return (
       <main className="catalog-page">
         <section className="catalog-empty">
