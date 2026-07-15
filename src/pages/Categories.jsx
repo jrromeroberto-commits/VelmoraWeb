@@ -12,9 +12,47 @@ import producto2 from "../imagenes/producto-2.png";
 import producto3 from "../imagenes/producto-3.png";
 import producto4 from "../imagenes/producto-4.png";
 import logoVelmora from "../imagenes/Logo_velmora_t.png";
-import { productsApi } from "../services/api";
+import {
+  categoriesApi,
+  favoritesApi,
+  getAuthToken,
+  productsApi,
+} from "../services/api";
 
 const fallbackImages = [producto1, producto2, producto3, producto4];
+
+const baseCategories = [
+  {
+    id: "ropa-urbana",
+    name: "Ropa urbana",
+    image: categoriaUrbana,
+    description: "Looks casuales, modernos y comodos para el dia a dia.",
+  },
+  {
+    id: "ropa-deportiva",
+    name: "Ropa deportiva",
+    image: categoriaDeportiva,
+    description: "Prendas comodas para entrenar o vestir con estilo sport.",
+  },
+  {
+    id: "calzado",
+    name: "Calzado",
+    image: categoriaCalzado,
+    description: "Zapatos, sandalias y zapatillas para cada ocasion.",
+  },
+  {
+    id: "accesorios",
+    name: "Accesorios",
+    image: categoriaAccesorios,
+    description: "Bolsos, joyeria, lentes y detalles para completar tu outfit.",
+  },
+  {
+    id: "moda-elegante",
+    name: "Moda elegante",
+    image: categoriaElegante,
+    description: "Prendas sofisticadas para reuniones y ocasiones especiales.",
+  },
+];
 
 const formatPrice = (price) => `S/ ${Number(price || 0).toFixed(2)}`;
 
@@ -22,6 +60,7 @@ const normalizeProduct = (product, index) => ({
   id: product.id,
   name: product.name,
   price: formatPrice(product.price),
+  priceValue: Number(product.price || 0),
   tag: product.stock > 0 ? "Disponible" : "Agotado",
   category: product.category || "Catalogo",
   image: product.imageUrl || fallbackImages[index % fallbackImages.length],
@@ -33,58 +72,49 @@ const normalizeProduct = (product, index) => ({
 
 function Categories({ onAddToCart }) {
   const [activeCategory, setActiveCategory] = useState("Todas");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
   const [trends, setTrends] = useState([]);
+  const [categoryStats, setCategoryStats] = useState([]);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [favoriteIds, setFavoriteIds] = useState([]);
   const [status, setStatus] = useState("loading");
+  const [message, setMessage] = useState("");
 
-  const filterButtons = [
-    "Todas",
-    "Ropa urbana",
-    "Ropa deportiva",
-    "Calzado",
-    "Accesorios",
-    "Moda elegante",
-  ];
+  const priceParams = useMemo(() => {
+    const params = {};
 
-  const categories = [
-    {
-      id: 1,
-      name: "Ropa urbana",
-      image: categoriaUrbana,
-      description: "Looks casuales, modernos y comodos para el dia a dia.",
-    },
-    {
-      id: 2,
-      name: "Ropa deportiva",
-      image: categoriaDeportiva,
-      description: "Prendas comodas para entrenar o vestir con estilo sport.",
-    },
-    {
-      id: 3,
-      name: "Calzado",
-      image: categoriaCalzado,
-      description: "Zapatos, sandalias y zapatillas para cada ocasion.",
-    },
-    {
-      id: 4,
-      name: "Accesorios",
-      image: categoriaAccesorios,
-      description: "Bolsos, joyeria, lentes y detalles para completar tu outfit.",
-    },
-    {
-      id: 5,
-      name: "Moda elegante",
-      image: categoriaElegante,
-      description: "Prendas sofisticadas para reuniones y ocasiones especiales.",
-    },
-  ];
+    if (minPrice !== "") params.minPrice = minPrice;
+    if (maxPrice !== "") params.maxPrice = maxPrice;
+
+    return params;
+  }, [maxPrice, minPrice]);
+
+  const isPriceRangeInvalid =
+    minPrice !== "" &&
+    maxPrice !== "" &&
+    Number(minPrice) > Number(maxPrice);
 
   useEffect(() => {
     let isMounted = true;
 
     async function loadProducts() {
+      if (isPriceRangeInvalid) {
+        setTrends([]);
+        setStatus("error");
+        setMessage("El precio minimo no puede ser mayor que el maximo.");
+        return;
+      }
+
       try {
         setStatus("loading");
-        const data = await productsApi.list();
+        setMessage("");
+
+        const params = {
+          ...priceParams,
+          ...(activeCategory !== "Todas" ? { category: activeCategory } : {}),
+        };
+        const data = await productsApi.list(params);
 
         if (isMounted) {
           setTrends((data.products || []).map(normalizeProduct));
@@ -95,6 +125,7 @@ function Categories({ onAddToCart }) {
 
         if (isMounted) {
           setStatus("error");
+          setMessage(error.message || "No se pudieron cargar productos.");
         }
       }
     }
@@ -104,20 +135,128 @@ function Categories({ onAddToCart }) {
     return () => {
       isMounted = false;
     };
+  }, [activeCategory, isPriceRangeInvalid, priceParams]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadCategories() {
+      if (isPriceRangeInvalid) return;
+
+      try {
+        const data = await categoriesApi.list(priceParams);
+
+        if (isMounted) {
+          setCategoryStats(data.categories || []);
+          setTotalProducts(data.totalProducts || 0);
+        }
+      } catch (error) {
+        console.error("No se pudieron cargar categorias:", error);
+      }
+    }
+
+    loadCategories();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isPriceRangeInvalid, priceParams]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadFavorites() {
+      if (!getAuthToken()) {
+        setFavoriteIds([]);
+        return;
+      }
+
+      try {
+        const data = await favoritesApi.list();
+
+        if (isMounted) {
+          setFavoriteIds((data.favorites || []).map((favorite) => favorite.productId));
+        }
+      } catch (error) {
+        console.error("No se pudieron cargar favoritos:", error);
+      }
+    }
+
+    loadFavorites();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  const filteredCategories =
-    activeCategory === "Todas"
+  const categoryCountByName = useMemo(() => {
+    const counts = new Map();
+
+    for (const category of categoryStats) {
+      counts.set(category.name, category.productCount);
+    }
+
+    return counts;
+  }, [categoryStats]);
+
+  const categoryFilters = useMemo(() => {
+    const baseNames = baseCategories.map((category) => category.name);
+    const backendNames = categoryStats.map((category) => category.name);
+
+    return ["Todas", ...new Set([...baseNames, ...backendNames])];
+  }, [categoryStats]);
+
+  const displayCategories = useMemo(() => {
+    const metadata = new Map(baseCategories.map((category) => [category.name, category]));
+
+    for (const category of categoryStats) {
+      if (!metadata.has(category.name)) {
+        metadata.set(category.name, {
+          id: category.name,
+          name: category.name,
+          image: fallbackImages[metadata.size % fallbackImages.length],
+          description: "Categoria creada a partir de productos registrados.",
+        });
+      }
+    }
+
+    const categories = [...metadata.values()];
+
+    return activeCategory === "Todas"
       ? categories
       : categories.filter((category) => category.name === activeCategory);
+  }, [activeCategory, categoryStats]);
 
-  const filteredTrends = useMemo(
-    () =>
-      activeCategory === "Todas"
-        ? trends
-        : trends.filter((product) => product.category === activeCategory),
-    [activeCategory, trends]
-  );
+  const clearPriceFilter = () => {
+    setMinPrice("");
+    setMaxPrice("");
+  };
+
+  const toggleFavorite = async (productId) => {
+    setMessage("");
+
+    if (!getAuthToken()) {
+      setMessage("Inicia sesion para guardar favoritos.");
+      return;
+    }
+
+    const isFavorite = favoriteIds.includes(productId);
+
+    try {
+      if (isFavorite) {
+        await favoritesApi.remove(productId);
+        setFavoriteIds((ids) => ids.filter((id) => id !== productId));
+      } else {
+        await favoritesApi.add(productId);
+        setFavoriteIds((ids) => [...new Set([...ids, productId])]);
+      }
+    } catch (error) {
+      setMessage(error.message || "No se pudo actualizar favoritos.");
+    }
+  };
+
+  const getCategoryCount = (category) =>
+    category === "Todas" ? totalProducts : categoryCountByName.get(category) || 0;
 
   return (
     <main className="categories-page">
@@ -147,22 +286,53 @@ function Categories({ onAddToCart }) {
 
       <section className="categories-filter-section" id="categorias">
         <div className="categories-filter-buttons">
-          {filterButtons.map((button) => (
+          {categoryFilters.map((button) => (
             <button
               type="button"
               key={button}
               className={activeCategory === button ? "active" : ""}
               onClick={() => setActiveCategory(button)}
             >
-              {button}
+              <span>{button}</span>
+              <small>{getCategoryCount(button)}</small>
             </button>
           ))}
         </div>
+
+        <div className="categories-price-filter">
+          <label>
+            Precio minimo
+            <input
+              type="number"
+              min="0"
+              placeholder="S/ 0"
+              value={minPrice}
+              onChange={(event) => setMinPrice(event.target.value)}
+            />
+          </label>
+
+          <label>
+            Precio maximo
+            <input
+              type="number"
+              min="0"
+              placeholder="S/ 250"
+              value={maxPrice}
+              onChange={(event) => setMaxPrice(event.target.value)}
+            />
+          </label>
+
+          <button type="button" onClick={clearPriceFilter}>
+            Limpiar
+          </button>
+        </div>
+
+        {message && <p className="categories-feedback">{message}</p>}
       </section>
 
       <section className="categories-grid-section">
         <div className="categories-grid">
-          {filteredCategories.map((category) => (
+          {displayCategories.map((category) => (
             <article className="category-card" key={category.id}>
               <img src={category.image} alt={category.name} />
 
@@ -171,6 +341,9 @@ function Categories({ onAddToCart }) {
                 <div>
                   <h3>{category.name}</h3>
                   <p>{category.description}</p>
+                  <span className="category-count">
+                    {getCategoryCount(category.name)} productos
+                  </span>
                 </div>
               </div>
             </article>
@@ -190,38 +363,51 @@ function Categories({ onAddToCart }) {
             <p className="categories-empty-message">
               Cargando productos desde el backend...
             </p>
-          ) : filteredTrends.length > 0 ? (
-            filteredTrends.map((product) => (
-              <article className="category-product-card" key={product.id}>
-                <div className="category-product-image">
-                  <img src={product.image} alt={product.name} />
+          ) : trends.length > 0 ? (
+            trends.map((product) => {
+              const isFavorite = favoriteIds.includes(product.id);
 
-                  <span>{product.tag}</span>
+              return (
+                <article className="category-product-card" key={product.id}>
+                  <div className="category-product-image">
+                    <img src={product.image} alt={product.name} />
 
-                  <button type="button" className="category-heart">
-                    ♡
-                  </button>
-                </div>
+                    <span>{product.tag}</span>
 
-                <div className="category-product-info">
-                  <h3>{product.name}</h3>
-                  <p>{product.price}</p>
-                  {product.storeName && <span>{product.storeName}</span>}
-                  <button
-                    type="button"
-                    className="category-cart-button"
-                    onClick={() => onAddToCart(product)}
-                  >
-                    Agregar al carrito
-                  </button>
-                </div>
-              </article>
-            ))
+                    <button
+                      type="button"
+                      className={`category-heart ${isFavorite ? "active" : ""}`}
+                      aria-label={
+                        isFavorite
+                          ? "Quitar producto de favoritos"
+                          : "Agregar producto a favoritos"
+                      }
+                      onClick={() => toggleFavorite(product.id)}
+                    >
+                      {isFavorite ? "\u2665" : "\u2661"}
+                    </button>
+                  </div>
+
+                  <div className="category-product-info">
+                    <h3>{product.name}</h3>
+                    <p>{product.price}</p>
+                    {product.storeName && <span>{product.storeName}</span>}
+                    <button
+                      type="button"
+                      className="category-cart-button"
+                      onClick={() => onAddToCart(product)}
+                    >
+                      Agregar al carrito
+                    </button>
+                  </div>
+                </article>
+              );
+            })
           ) : (
             <p className="categories-empty-message">
               {status === "error"
-                ? "No se pudieron cargar productos desde el backend."
-                : "Aun no hay productos registrados para esta categoria."}
+                ? message || "No se pudieron cargar productos desde el backend."
+                : "Aun no hay productos registrados para esta categoria o rango de precio."}
             </p>
           )}
         </div>

@@ -75,6 +75,13 @@ export const productsApi = {
   },
 };
 
+export const categoriesApi = {
+  list: (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return request(`/api/categories${query ? `?${query}` : ""}`);
+  },
+};
+
 export const storesApi = {
   list: () => request("/api/stores"),
   get: (id) => request(`/api/stores/${id}`),
@@ -115,6 +122,20 @@ export const ordersApi = {
       token,
     }),
   mine: (token) => request("/api/orders/my", { token }),
+};
+
+export const favoritesApi = {
+  list: () => request("/api/favorites", { auth: true }),
+  add: (productId) =>
+    request(`/api/favorites/${productId}`, {
+      method: "POST",
+      auth: true,
+    }),
+  remove: (productId) =>
+    request(`/api/favorites/${productId}`, {
+      method: "DELETE",
+      auth: true,
+    }),
 };
 
 export const eventsApi = {
