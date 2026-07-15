@@ -68,6 +68,13 @@ export const homeApi = {
   get: () => request("/api/home"),
 };
 
+export const productsApi = {
+  list: (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return request(`/api/products${query ? `?${query}` : ""}`);
+  },
+};
+
 export const storesApi = {
   list: () => request("/api/stores"),
   get: (id) => request(`/api/stores/${id}`),
@@ -108,4 +115,24 @@ export const ordersApi = {
       token,
     }),
   mine: (token) => request("/api/orders/my", { token }),
+};
+
+export const eventsApi = {
+  list: (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return request(`/api/events${query ? `?${query}` : ""}`);
+  },
+  create: (data, token) =>
+    request("/api/events", {
+      method: "POST",
+      body: data,
+      token,
+    }),
+};
+
+export const discountsApi = {
+  list: (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return request(`/api/discounts${query ? `?${query}` : ""}`);
+  },
 };

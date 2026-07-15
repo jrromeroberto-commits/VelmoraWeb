@@ -1,11 +1,6 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  FaTag,
-  FaClock,
-  FaStore,
-  FaTicketAlt,
-} from "react-icons/fa";
+import { FaClock, FaStore, FaTag, FaTicketAlt } from "react-icons/fa";
 
 import descuento1 from "../imagenes/descuento1.png";
 import descuento2 from "../imagenes/descuento2.png";
@@ -13,76 +8,67 @@ import descuento3 from "../imagenes/descuento3.png";
 import descuento4 from "../imagenes/descuento4.png";
 import descuento5 from "../imagenes/descuento5.png";
 import descuento6 from "../imagenes/descuento6.png";
+import { discountsApi } from "../services/api";
+
+const fallbackImages = [
+  descuento1,
+  descuento2,
+  descuento3,
+  descuento4,
+  descuento5,
+  descuento6,
+];
+
+function normalizeDiscount(item, index) {
+  return {
+    id: item.id,
+    store: item.storeName,
+    discount: item.title,
+    description: item.description,
+    category: item.category,
+    date: item.validUntil || "Promocion activa",
+    image: item.imageUrl || fallbackImages[index % fallbackImages.length],
+    storeUrl: item.storeUrl,
+  };
+}
 
 function Discounts() {
   const [activeCategory, setActiveCategory] = useState("Todos");
+  const [discounts, setDiscounts] = useState([]);
+  const [status, setStatus] = useState("loading");
 
-  const categories = [
-    "Todos",
-    "Polos",
-    "Pantalones",
-    "Vestidos",
-    "Calzado",
-    "Accesorios",
-    "Deportivas",
-  ];
+  useEffect(() => {
+    let isMounted = true;
 
-  const discounts = [
-    {
-      id: 1,
-      store: "Urban Flow",
-      discount: "50% OFF",
-      description: "Ropa urbana seleccionada",
-      category: "Polos",
-      date: "Válido hasta el 30 de junio",
-      image: descuento1,
-    },
-    {
-      id: 2,
-      store: "Nova Fit",
-      discount: "35% OFF",
-      description: "Prendas deportivas para entrenamiento",
-      category: "Deportivas",
-      date: "Oferta por tiempo limitado",
-      image: descuento2,
-    },
-    {
-      id: 3,
-      store: "Luna Wear",
-      discount: "40% OFF",
-      description: "Outfits diarios y modernos",
-      category: "Vestidos",
-      date: "Válido hasta agotar stock",
-      image: descuento3,
-    },
-    {
-      id: 4,
-      store: "Maisoné",
-      discount: "25% OFF",
-      description: "Calzado elegante de temporada",
-      category: "Calzado",
-      date: "Solo esta semana",
-      image: descuento4,
-    },
-    {
-      id: 5,
-      store: "Norda",
-      discount: "2x1",
-      description: "Accesorios seleccionados",
-      category: "Accesorios",
-      date: "Promoción exclusiva online",
-      image: descuento5,
-    },
-    {
-      id: 6,
-      store: "Avanto",
-      discount: "30% OFF",
-      description: "Pantalones de nueva colección",
-      category: "Pantalones",
-      date: "Válido hasta el domingo",
-      image: descuento6,
-    },
-  ];
+    async function loadDiscounts() {
+      try {
+        setStatus("loading");
+        const data = await discountsApi.list();
+
+        if (isMounted) {
+          setDiscounts((data.discounts || []).map(normalizeDiscount));
+          setStatus("ready");
+        }
+      } catch (error) {
+        console.error("No se pudieron cargar descuentos:", error);
+
+        if (isMounted) {
+          setStatus("error");
+        }
+      }
+    }
+
+    loadDiscounts();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const categories = useMemo(
+    () => ["Todos", ...new Set(discounts.map((item) => item.category))],
+    [discounts]
+  );
 
   const filteredDiscounts =
     activeCategory === "Todos"
@@ -91,49 +77,55 @@ function Discounts() {
 
   return (
     <main className="discounts-page">
-        <section className="discount-hero">
-          <div className="discount-hero-content">
-            <p className="discount-label">Promociones especiales</p>
+      <section className="discount-hero">
+        <div className="discount-hero-content">
+          <p className="discount-label">Promociones especiales</p>
 
-            <h1>
-              Descuentos <br />
-              <span>exclusivos</span>
-            </h1>
+          <h1>
+            Descuentos <br />
+            <span>exclusivos</span>
+          </h1>
 
-            <p>
-              Encuentra ofertas especiales de tus tiendas favoritas. Aprovecha
-              promociones por tiempo limitado en ropa, calzado y accesorios.
+          <p>
+            Ofertas cargadas desde el backend para que las promociones no sean
+            datos estaticos del frontend.
+          </p>
+
+          <a href="#ofertas" className="discount-hero-button">
+            Ver ofertas
+          </a>
+        </div>
+      </section>
+
+      <section className="discount-filters" id="ofertas">
+        <div className="discount-section-title">
+          <span></span>
+          <h2>Ofertas destacadas</h2>
+          <span></span>
+        </div>
+
+        <div className="discount-filter-buttons">
+          {categories.map((category) => (
+            <button
+              type="button"
+              key={category}
+              className={activeCategory === category ? "active" : ""}
+              onClick={() => setActiveCategory(category)}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="discount-grid-section">
+        <div className="discount-grid">
+          {status === "loading" ? (
+            <p className="categories-empty-message">
+              Cargando descuentos desde el backend...
             </p>
-
-            <a href="#ofertas" className="discount-hero-button">
-              Ver ofertas
-            </a>
-          </div>
-        </section>
-
-        <section className="discount-filters" id="ofertas">
-          <div className="discount-section-title">
-            <span></span>
-            <h2>Ofertas destacadas</h2>
-            <span></span>
-          </div>
-
-          <div className="discount-filter-buttons">
-            {categories.map((category) => (
-              <button
-                key={category}
-                className={activeCategory === category ? "active" : ""}
-                onClick={() => setActiveCategory(category)}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-        </section>
-
-        <section className="discount-grid-section">
-          <div className="discount-grid">
-            {filteredDiscounts.map((item) => (
+          ) : filteredDiscounts.length > 0 ? (
+            filteredDiscounts.map((item) => (
               <article className="discount-card" key={item.id}>
                 <div className="discount-image">
                   <img src={item.image} alt={item.store} />
@@ -158,58 +150,58 @@ function Discounts() {
                     <span>{item.category}</span>
                   </div>
 
-                  <a href="#" className="discount-card-button">
-                    Ver tienda
-                  </a>
+                  {item.storeUrl ? (
+                    <a href={item.storeUrl} className="discount-card-button">
+                      Ver tienda
+                    </a>
+                  ) : (
+                    <Link to="/tiendas" className="discount-card-button">
+                      Ver tiendas
+                    </Link>
+                  )}
                 </div>
               </article>
-            ))}
-          </div>
-        </section>
+            ))
+          ) : (
+            <p className="categories-empty-message">
+              {status === "error"
+                ? "No se pudieron cargar descuentos desde el backend."
+                : "Aun no hay descuentos registrados."}
+            </p>
+          )}
+        </div>
+      </section>
 
-        <section className="coupon-section">
-          <div className="discount-section-title">
-            <span></span>
-            <h2>Cupones exclusivos</h2>
-            <span></span>
-          </div>
+      <section className="coupon-section">
+        <div className="discount-section-title">
+          <span></span>
+          <h2>Cupones exclusivos</h2>
+          <span></span>
+        </div>
 
-          <div className="coupon-grid">
-            <article className="coupon-card">
+        <div className="coupon-grid">
+          {discounts.slice(0, 3).map((item) => (
+            <article className="coupon-card" key={`coupon-${item.id}`}>
               <FaTicketAlt className="coupon-icon" />
-              <h3>VELMORA50</h3>
-              <p>Obtén 50% de descuento en tiendas seleccionadas.</p>
-              <button>Copiar cupón</button>
+              <h3>{item.discount.replace(/\s+/g, "").toUpperCase()}</h3>
+              <p>{item.description}</p>
+              <button type="button">Copiar cupon</button>
             </article>
+          ))}
+        </div>
+      </section>
 
-            <article className="coupon-card">
-              <FaTicketAlt className="coupon-icon" />
-              <h3>NUEVATIENDA</h3>
-              <p>Primer mes gratuito para nuevas tiendas afiliadas.</p>
-              <button>Copiar cupón</button>
-            </article>
+      <section className="seller-discount-banner">
+        <div>
+          <p>Para tiendas</p>
+          <h2>Publica tus descuentos en Velmora</h2>
+          <span>
+            Llega a mas clientes mostrando promociones dentro de la plataforma.
+          </span>
+        </div>
 
-            <article className="coupon-card">
-              <FaTicketAlt className="coupon-icon" />
-              <h3>MODA10</h3>
-              <p>Descuento adicional en ropa y accesorios destacados.</p>
-              <button>Copiar cupón</button>
-            </article>
-          </div>
-        </section>
-
-        <section className="seller-discount-banner">
-          <div>
-            <p>Para tiendas</p>
-            <h2>Publica tus descuentos en Velmora</h2>
-            <span>
-              Llega a más clientes mostrando tus promociones dentro de nuestra
-              galería virtual de moda.
-            </span>
-          </div>
-
-          <Link to="/registro">Unirme como vendedor</Link>
-        </section>
+        <Link to="/registro">Unirme como vendedor</Link>
+      </section>
     </main>
   );
 }
